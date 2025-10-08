@@ -1,15 +1,30 @@
 import json
 import requests
 import os
-from typing import List, Dict, Any, Optional, Set, Tuple
-from collections import defaultdict, deque
+import math
+import random
+from typing import List, Dict, Any, Optional, Tuple
+from dataclasses import dataclass
+
+@dataclass
+class TrueSkillRating:
+    mu: float = 25.0      # Mean skill level
+    sigma: float = 25.0/3  # Standard deviation (uncertainty)
+
+    @property
+    def conservative_rating(self) -> float:
+        """Conservative skill estimate (mu - 3*sigma)"""
+        return self.mu - 3 * self.sigma
 
 class SkillSorter:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = "google/gemini-2.5-flash"
+        self.model = "mistralai/mistral-7b-instruct:free"
         self.resume_content = ""
+        self.ratings: Dict[str, TrueSkillRating] = {}
+        self.beta = 25.0/6    # Skill difference factor
+        self.tau = 25.0/300   # Additive dynamics factor
 
     def load_resume(self, file_path: str) -> str:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -21,6 +36,11 @@ class SkillSorter:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             return data.get('skills', [])
+
+    def initialize_ratings(self, skills: List[str]) -> None:
+        """Initialize all skills with default TrueSkill ratings"""
+        for skill in skills:
+            self.ratings[skill] = TrueSkillRating()
 
     def make_api_request(self, user_prompt: str) -> Dict[str, Any]:
         headers = {
@@ -43,13 +63,7 @@ class SkillSorter:
         return response.json()
 
     def ask_comparison(self, skill_a: str, skill_b: str, question_type: str) -> bool:
-        """
-        Ask one of four question types:
-        - 'a_over_b': "Is skill A more supported by the resume than skill B?"
-        - 'b_over_a': "Is skill B more supported by the resume than skill A?"
-        - 'not_a_over_b': "Is it false that skill A is more supported by the resume than skill B?"
-        - 'not_b_over_a': "Is it false that skill B is more supported by the resume than skill A?"
-        """
+        """Ask one of four question types for verification"""
 
         if question_type == 'a_over_b':
             prompt = f'Is the skill "{skill_a}" more supported by evidence in the resume than the skill "{skill_b}"? Answer only "true" or "false".'
@@ -65,15 +79,7 @@ class SkillSorter:
         try:
             response = self.make_api_request(prompt)
             content = response['choices'][0]['message']['content'].strip().lower()
-
-            if content == 'true':
-                return True
-            elif content == 'false':
-                return False
-            else:
-                print(f"Unexpected response: {content}")
-                return False
-
+            return content == 'true'
         except Exception as e:
             print(f"Error in comparison: {e}")
             return False
@@ -81,7 +87,7 @@ class SkillSorter:
     def compare_skills_verified(self, skill_a: str, skill_b: str) -> Optional[bool]:
         """
         Compare two skills with quadruple verification.
-        Returns True if A > B, False if B > A, None if verification fails.
+        Returns True if A wins, False if B wins, None if verification fails.
         """
         print(f"Comparing: {skill_a} vs {skill_b}")
 
@@ -94,85 +100,123 @@ class SkillSorter:
         print(f"  A>B: {a_over_b}, B>A: {b_over_a}, !(A>B): {not_a_over_b}, !(B>A): {not_b_over_a}")
 
         # Check consistency
-        # If A>B is true, then B>A should be false, !(A>B) should be false, !(B>A) should be true
-        # If A>B is false, then B>A should be true, !(A>B) should be true, !(B>A) should be false
-
         if a_over_b:
             # A > B case
-            expected = (a_over_b == True, b_over_a == False, not_a_over_b == False, not_b_over_a == True)
+            expected = (True, False, False, True)
             actual = (a_over_b, b_over_a, not_a_over_b, not_b_over_a)
             if expected == actual:
-                print(f"   Verified: {skill_a} > {skill_b}")
+                print(f"  ✓ Verified: {skill_a} wins")
                 return True
         else:
-            # B > A case (since A > B is false)
-            expected = (a_over_b == False, b_over_a == True, not_a_over_b == True, not_b_over_a == False)
+            # B > A case
+            expected = (False, True, True, False)
             actual = (a_over_b, b_over_a, not_a_over_b, not_b_over_a)
             if expected == actual:
-                print(f"   Verified: {skill_b} > {skill_a}")
+                print(f"  ✓ Verified: {skill_b} wins")
                 return False
 
-        print(f"   Verification failed - inconsistent answers")
+        print(f"  ✗ Verification failed - inconsistent answers")
         return None
 
-    def topological_sort(self, skills: List[str]) -> List[str]:
+    def gaussian_cdf(self, x: float) -> float:
+        """Cumulative distribution function of standard normal distribution"""
+        return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+    def gaussian_pdf(self, x: float) -> float:
+        """Probability density function of standard normal distribution"""
+        return math.exp(-0.5 * x * x) / math.sqrt(2 * math.pi)
+
+    def update_ratings(self, winner: str, loser: str) -> None:
+        """Update TrueSkill ratings based on match outcome"""
+        winner_rating = self.ratings[winner]
+        loser_rating = self.ratings[loser]
+
+        # Calculate match quality parameters
+        c = math.sqrt(winner_rating.sigma**2 + loser_rating.sigma**2 + 2 * self.beta**2)
+
+        # Performance difference
+        delta_mu = winner_rating.mu - loser_rating.mu
+
+        # TrueSkill update factors
+        v = self.gaussian_pdf(delta_mu / c) / self.gaussian_cdf(delta_mu / c)
+        w = v * (v + delta_mu / c)
+
+        # Update winner
+        winner_mu_delta = (winner_rating.sigma**2 / c) * v
+        winner_sigma_multiplier = 1 - (winner_rating.sigma**2 / c**2) * w
+
+        self.ratings[winner] = TrueSkillRating(
+            mu=winner_rating.mu + winner_mu_delta,
+            sigma=winner_rating.sigma * math.sqrt(max(winner_sigma_multiplier, 0.01))
+        )
+
+        # Update loser
+        loser_mu_delta = -(loser_rating.sigma**2 / c) * v
+        loser_sigma_multiplier = 1 - (loser_rating.sigma**2 / c**2) * w
+
+        self.ratings[loser] = TrueSkillRating(
+            mu=loser_rating.mu + loser_mu_delta,
+            sigma=loser_rating.sigma * math.sqrt(max(loser_sigma_multiplier, 0.01))
+        )
+
+        print(f"  Updated ratings:")
+        print(f"    {winner}: μ={self.ratings[winner].mu:.2f}, σ={self.ratings[winner].sigma:.2f}")
+        print(f"    {loser}: μ={self.ratings[loser].mu:.2f}, σ={self.ratings[loser].sigma:.2f}")
+
+    def run_trueskill_tournament(self, skills: List[str], num_rounds: int = 3) -> List[str]:
         """
-        Perform topological sort using verified comparisons.
+        Run a stochastic TrueSkill tournament with multiple rounds.
+        Each round performs random pairwise comparisons.
         """
-        print(f"Starting topological sort of {len(skills)} skills...")
+        self.initialize_ratings(skills)
 
-        # Build adjacency list and in-degree count
-        graph = defaultdict(list)
-        in_degree = defaultdict(int)
+        print(f"Starting TrueSkill tournament with {len(skills)} skills for {num_rounds} rounds...")
 
-        # Initialize all skills
-        for skill in skills:
-            in_degree[skill] = 0
+        for round_num in range(num_rounds):
+            print(f"\n=== Round {round_num + 1} ===")
 
-        # Compare all pairs
-        total_comparisons = len(skills) * (len(skills) - 1) // 2
-        comparison_count = 0
+            # Create random pairs for this round
+            skills_copy = skills.copy()
+            random.shuffle(skills_copy)
 
-        for i in range(len(skills)):
-            for j in range(i + 1, len(skills)):
-                comparison_count += 1
-                print(f"Comparison {comparison_count}/{total_comparisons}")
+            pairs = []
+            for i in range(0, len(skills_copy) - 1, 2):
+                pairs.append((skills_copy[i], skills_copy[i + 1]))
 
-                skill_a = skills[i]
-                skill_b = skills[j]
+            # If odd number of skills, add a random pairing with the last skill
+            if len(skills_copy) % 2 == 1:
+                last_skill = skills_copy[-1]
+                random_opponent = random.choice(skills_copy[:-1])
+                pairs.append((last_skill, random_opponent))
+
+            print(f"Round {round_num + 1}: {len(pairs)} matches")
+
+            # Process each match
+            for match_num, (skill_a, skill_b) in enumerate(pairs, 1):
+                print(f"\nMatch {match_num}/{len(pairs)}")
 
                 result = self.compare_skills_verified(skill_a, skill_b)
 
-                if result is True:  # A > B
-                    graph[skill_a].append(skill_b)
-                    in_degree[skill_b] += 1
-                elif result is False:  # B > A
-                    graph[skill_b].append(skill_a)
-                    in_degree[skill_a] += 1
-                # If result is None, skip this edge (verification failed)
+                if result is True:
+                    self.update_ratings(skill_a, skill_b)
+                elif result is False:
+                    self.update_ratings(skill_b, skill_a)
+                else:
+                    print(f"  Skipping match due to verification failure")
 
-        # Kahn's algorithm for topological sort
-        queue = deque([skill for skill in skills if in_degree[skill] == 0])
-        sorted_skills = []
+            # Show current standings
+            print(f"\nStandings after round {round_num + 1}:")
+            current_standings = self.get_current_standings()
+            for i, (skill, rating) in enumerate(current_standings, 1):
+                print(f"  {i}. {skill}: μ={rating.mu:.2f}, σ={rating.sigma:.2f}, conservative={rating.conservative_rating:.2f}")
 
-        while queue:
-            current = queue.popleft()
-            sorted_skills.append(current)
+        return [skill for skill, _ in self.get_current_standings()]
 
-            for neighbor in graph[current]:
-                in_degree[neighbor] -= 1
-                if in_degree[neighbor] == 0:
-                    queue.append(neighbor)
-
-        # Check if we have a valid topological sort
-        if len(sorted_skills) != len(skills):
-            print("Warning: Cycle detected or verification failures. Some skills may be missing from sorted result.")
-            # Add remaining skills to the end
-            for skill in skills:
-                if skill not in sorted_skills:
-                    sorted_skills.append(skill)
-
-        return sorted_skills
+    def get_current_standings(self) -> List[Tuple[str, TrueSkillRating]]:
+        """Get current standings sorted by conservative rating (mu - 3*sigma)"""
+        return sorted(self.ratings.items(),
+                     key=lambda x: x[1].conservative_rating,
+                     reverse=True)
 
 def main():
     api_key = os.getenv('OPENROUTER_API_KEY')
@@ -189,18 +233,30 @@ def main():
 
     print(f"Loaded {len(skills)} skills: {skills}")
 
-    # Perform topological sort
-    sorted_skills = sorter.topological_sort(skills)
+    # Run TrueSkill tournament
+    num_rounds = max(2, len(skills) // 2)  # Adaptive number of rounds
+    final_rankings = sorter.run_trueskill_tournament(skills, num_rounds)
 
-    print(f"\nFinal sorted skills (most supported to least supported):")
-    for i, skill in enumerate(sorted_skills, 1):
+    print(f"\n🏆 Final TrueSkill Rankings:")
+    final_standings = sorter.get_current_standings()
+    for i, (skill, rating) in enumerate(final_standings, 1):
         print(f"{i}. {skill}")
+        print(f"   μ={rating.mu:.2f}, σ={rating.sigma:.2f}, conservative={rating.conservative_rating:.2f}")
 
     # Save results
     result = {
         "original_skills": skills,
-        "sorted_skills": sorted_skills,
-        "sort_order": "most_supported_to_least_supported"
+        "final_rankings": final_rankings,
+        "detailed_ratings": {
+            skill: {
+                "mu": rating.mu,
+                "sigma": rating.sigma,
+                "conservative_rating": rating.conservative_rating
+            }
+            for skill, rating in sorter.ratings.items()
+        },
+        "algorithm": "TrueSkill",
+        "rounds": num_rounds
     }
 
     with open("sorted_skills.json", "w") as f:

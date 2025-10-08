@@ -8,7 +8,7 @@ class SkillExtractor:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = "google/gemini-2.5-flash"
+        self.model = "mistralai/mistral-7b-instruct:free"
         self.extracted_skills = []
         self.counter = 0
         self.zero_counter_streak = 0
