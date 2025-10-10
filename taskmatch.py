@@ -1,7 +1,10 @@
 import json
 import numpy as np
+from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from typing import Dict, List, Tuple, Union, Any
+
+OUTPUT_DIR = Path("output")
 
 # Define a task suitable for Ebony Moore: "Deploy and Configure a Monitoring System for Linux Servers"
 # This task involves setting up Nagios/Zabbix monitoring across multiple Linux servers
@@ -243,7 +246,7 @@ def print_graph_structure(graph: Dict, indent: int = 0):
                 if isinstance(inp, str):
                     print("  " * (indent + 1) + f"- {inp}")
                 else:
-                    print("  " * (indent + 1) + f"- (inline operation)")
+                    print("  " * (indent + 1) + "- (inline operation)")
                     print_graph_structure({f"inline_{op}": inp}, indent + 2)
 
 
@@ -282,8 +285,9 @@ def main():
 
     # Load extracted skills
     print("=" * 80)
-    print("Loading extracted skills from extracted_skills.json...")
-    extracted_skills = load_extracted_skills('extracted_skills.json')
+    input_file = OUTPUT_DIR / "extracted_skills.json"
+    print(f"Loading extracted skills from {input_file}...")
+    extracted_skills = load_extracted_skills(str(input_file))
     print(f"Loaded {len(extracted_skills)} skills")
 
     # Evaluate task compatibility
@@ -336,15 +340,16 @@ def main():
         ]
     }
 
-    with open('task_skill_matches.json', 'w') as f:
+    output_file = OUTPUT_DIR / "task_skill_matches.json"
+    with open(output_file, 'w') as f:
         json.dump(output_data, f, indent=2)
 
     print("\n" + "=" * 80)
-    print("Full results saved to task_skill_matches.json")
+    print(f"Full results saved to {output_file}")
     print("=" * 80)
 
     # Summary statistics
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  Total extracted skills analyzed: {len(extracted_skills)}")
     print(f"  Input nodes: {len(TASK_SKILL_GRAPH['input_nodes'])}")
     print(f"  Graph nodes: {len(TASK_SKILL_GRAPH['graph'])}")

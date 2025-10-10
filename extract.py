@@ -2,7 +2,10 @@ import json
 import random
 import requests
 import os
+from pathlib import Path
 from typing import List, Dict, Any
+
+OUTPUT_DIR = Path("output")
 
 class SkillExtractor:
     def __init__(self, api_key: str):
@@ -59,6 +62,10 @@ class SkillExtractor:
 
     def extract_skills(self, resume_path: str) -> List[str]:
         system_prompt = self.load_resume(resume_path)
+        
+        print(f"Loaded resume ({len(system_prompt)} characters)")
+        print(f"Using model: {self.model}")
+        print("Starting with empty skills list\n")
 
         while True:
             if self.zero_counter_streak >= 10:
@@ -73,6 +80,7 @@ class SkillExtractor:
             try:
                 response = self.make_api_request(system_prompt, user_prompt)
                 content = response['choices'][0]['message']['content']
+                print(f"API Response: {content[:100]}...")  # Show first 100 chars for debugging
 
                 # Clean up markdown code blocks if present
                 if content.startswith('```json'):
@@ -131,8 +139,11 @@ def main():
         print("Please set OPENROUTER_API_KEY environment variable")
         return
 
+    # Create output directory if it doesn't exist
+    OUTPUT_DIR.mkdir(exist_ok=True)
+
     extractor = SkillExtractor(api_key)
-    resume_path = "resume.txt"
+    resume_path = "data/resume.txt"
 
     print("Starting skill extraction...")
     skills = extractor.extract_skills(resume_path)
@@ -141,10 +152,11 @@ def main():
     for i, skill in enumerate(skills, 1):
         print(f"{i}. {skill}")
 
-    with open("extracted_skills.json", "w") as f:
+    output_file = OUTPUT_DIR / "extracted_skills.json"
+    with open(output_file, "w") as f:
         json.dump({"skills": skills}, f, indent=2)
 
-    print("\nSkills saved to extracted_skills.json")
+    print(f"\nSkills saved to {output_file}")
 
 if __name__ == "__main__":
     main()
