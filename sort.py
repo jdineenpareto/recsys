@@ -6,7 +6,7 @@ import random
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from pathlib import Path
-from cost_tracker import CostTracker
+from utils import CostTracker
 
 OUTPUT_DIR = Path("output")
 

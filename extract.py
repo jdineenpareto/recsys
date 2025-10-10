@@ -4,7 +4,7 @@ import requests
 import os
 from pathlib import Path
 from typing import List, Dict, Any
-from cost_tracker import CostTracker
+from utils import CostTracker
 
 OUTPUT_DIR = Path("output")
 

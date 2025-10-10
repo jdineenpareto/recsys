@@ -11,7 +11,7 @@ import sys
 from extract import SkillExtractor
 from taskmatch import TaskMatcher, DATA_DIR, OUTPUT_DIR, list_tasks
 from sort import SkillSorter
-from cost_tracker import CostTracker
+from utils import CostTracker
 import os
 
 def run_extract(resume_path: str = "data/resume.txt", model: str = "anthropic/claude-3.5-sonnet",
