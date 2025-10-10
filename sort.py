@@ -21,10 +21,12 @@ class TrueSkillRating:
         return self.mu - 3 * self.sigma
 
 class SkillSorter:
-    def __init__(self, api_key: str, model: str = "anthropic/claude-3.5-sonnet", cost_tracker: CostTracker = None):
+    def __init__(self, api_key: str, model: str = "anthropic/claude-3.5-sonnet", 
+                 temperature: float = 0.5, cost_tracker: CostTracker = None):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
         self.model = model
+        self.temperature = temperature
         self.resume_content = ""
         self.ratings: Dict[str, TrueSkillRating] = {}
         self.beta = 25.0/6    # Skill difference factor
@@ -57,6 +59,7 @@ class SkillSorter:
 
         data = {
             "model": self.model,
+            "temperature": self.temperature,
             "messages": [
                 {"role": "system", "content": self.resume_content},
                 {"role": "user", "content": user_prompt}
@@ -124,7 +127,7 @@ class SkillSorter:
                 print(f"  ✓ Verified: {skill_b} wins")
                 return False
 
-        print(f"  ✗ Verification failed - inconsistent answers")
+        print("  ✗ Verification failed - inconsistent answers")
         return None
 
     def gaussian_cdf(self, x: float) -> float:
@@ -168,7 +171,7 @@ class SkillSorter:
             sigma=loser_rating.sigma * math.sqrt(max(loser_sigma_multiplier, 0.01))
         )
 
-        print(f"  Updated ratings:")
+        print("  Updated ratings:")
         print(f"    {winner}: μ={self.ratings[winner].mu:.2f}, σ={self.ratings[winner].sigma:.2f}")
         print(f"    {loser}: μ={self.ratings[loser].mu:.2f}, σ={self.ratings[loser].sigma:.2f}")
 
@@ -211,7 +214,7 @@ class SkillSorter:
                 elif result is False:
                     self.update_ratings(skill_b, skill_a)
                 else:
-                    print(f"  Skipping match due to verification failure")
+                    print("  Skipping match due to verification failure")
 
             # Show current standings
             print(f"\nStandings after round {round_num + 1}:")
@@ -231,7 +234,7 @@ class SkillSorter:
             num_rounds: int = None, output_dir: Path = OUTPUT_DIR) -> tuple:
         """Main execution method for skill sorting."""
         print("Starting TrueSkill skill sorting...")
-        print(f"Using model: {self.model}")
+        print(f"Using model: {self.model} (temperature: {self.temperature})")
         
         # Load resume
         self.load_resume(resume_path)

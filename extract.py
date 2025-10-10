@@ -9,10 +9,12 @@ from cost_tracker import CostTracker
 OUTPUT_DIR = Path("output")
 
 class SkillExtractor:
-    def __init__(self, api_key: str, model: str = "anthropic/claude-3.5-sonnet", cost_tracker: CostTracker = None):
+    def __init__(self, api_key: str, model: str = "anthropic/claude-3.5-sonnet", 
+                 temperature: float = 0.0, cost_tracker: CostTracker = None):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
         self.model = model
+        self.temperature = temperature
         self.extracted_skills = []
         self.counter = 0
         self.zero_counter_streak = 0
@@ -32,6 +34,7 @@ class SkillExtractor:
 
         data = {
             "model": self.model,
+            "temperature": self.temperature,
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -142,7 +145,7 @@ class SkillExtractor:
     def run(self, resume_path: str, output_dir: Path = OUTPUT_DIR) -> tuple:
         """Main execution method for skill extraction."""
         print("Starting skill extraction...")
-        print(f"Using model: {self.model}")
+        print(f"Using model: {self.model} (temperature: {self.temperature})")
         
         skills = self.extract_skills(resume_path)
 

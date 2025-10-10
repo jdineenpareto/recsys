@@ -14,8 +14,8 @@ from sort import SkillSorter
 from cost_tracker import CostTracker
 import os
 
-def run_extract(resume_path: str = "data/resume.txt", model: str = "anthropic/claude-3.5-sonnet", 
-                cost_tracker: CostTracker = None) -> tuple:
+def run_extract(resume_path: str = "data/resume.txt", model: str = "anthropic/claude-3.5-sonnet",
+                temperature: float = 0.0, cost_tracker: CostTracker = None) -> tuple:
     """Run skill extraction step."""
     print("\n" + "="*80)
     print("STEP 1: SKILL EXTRACTION")
@@ -33,7 +33,7 @@ def run_extract(resume_path: str = "data/resume.txt", model: str = "anthropic/cl
     if cost_tracker is None:
         cost_tracker = CostTracker(api_key)
     
-    extractor = SkillExtractor(api_key, model=model, cost_tracker=cost_tracker)
+    extractor = SkillExtractor(api_key, model=model, temperature=temperature, cost_tracker=cost_tracker)
     skills, cost_tracker = extractor.run(resume_path, OUTPUT_DIR)
     
     return skills, cost_tracker
@@ -59,7 +59,8 @@ def run_match(task_file: str = "task_linux_monitoring.json", skills: list = None
 
 
 def run_sort(resume_path: str = "data/resume.txt", skills: list = None, num_rounds: int = None, 
-             model: str = "anthropic/claude-3.5-sonnet", cost_tracker: CostTracker = None) -> tuple:
+             model: str = "anthropic/claude-3.5-sonnet", temperature: float = 0.5, 
+             cost_tracker: CostTracker = None) -> tuple:
     """Run skill sorting step using TrueSkill ranking."""
     print("\n" + "="*80)
     print("STEP 3: SKILL RANKING (TrueSkill)")
@@ -74,7 +75,7 @@ def run_sort(resume_path: str = "data/resume.txt", skills: list = None, num_roun
     if cost_tracker is None:
         cost_tracker = CostTracker(api_key)
     
-    sorter = SkillSorter(api_key, model=model, cost_tracker=cost_tracker)
+    sorter = SkillSorter(api_key, model=model, temperature=temperature, cost_tracker=cost_tracker)
     
     result, cost_tracker = sorter.run(resume_path, skills=skills, num_rounds=num_rounds, output_dir=OUTPUT_DIR)
     return result, cost_tracker
@@ -84,7 +85,9 @@ def run_pipeline(resume_path: str = "data/resume.txt", task_file: str = "task_li
                  include_sort: bool = False, sort_rounds: int = None,
                  extract_model: str = "anthropic/claude-3.5-sonnet",
                  sort_model: str = "anthropic/claude-3.5-sonnet",
-                 embedding_model: str = 'all-MiniLM-L6-v2'):
+                 embedding_model: str = 'all-MiniLM-L6-v2',
+                 extract_temperature: float = 0.0,
+                 sort_temperature: float = 0.5):
     """Run the complete pipeline: extract -> match -> (optional) sort."""
     print("\n" + "="*80)
     print("RUNNING COMPLETE PIPELINE")
@@ -99,14 +102,14 @@ def run_pipeline(resume_path: str = "data/resume.txt", task_file: str = "task_li
     cost_tracker = CostTracker(api_key)
     
     # Step 1: Extract skills
-    skills, cost_tracker = run_extract(resume_path, extract_model, cost_tracker)
+    skills, cost_tracker = run_extract(resume_path, extract_model, extract_temperature, cost_tracker)
     
     # Step 2: Match to task
     run_match(task_file, skills, embedding_model)
     
     # Step 3 (optional): Sort skills by evidence strength
     if include_sort:
-        _, cost_tracker = run_sort(resume_path, skills, sort_rounds, sort_model, cost_tracker)
+        _, cost_tracker = run_sort(resume_path, skills, sort_rounds, sort_model, sort_temperature, cost_tracker)
     
     print("\n" + "="*80)
     print("PIPELINE COMPLETE")
@@ -198,22 +201,38 @@ Examples:
         help='Embedding model for task matching (default: all-MiniLM-L6-v2)'
     )
     
+    parser.add_argument(
+        '--extract-temperature',
+        type=float,
+        default=1.0,
+        help='Temperature for extraction model'
+    )
+    
+    parser.add_argument(
+        '--sort-temperature',
+        type=float,
+        default=1.0,
+        help='Temperature for sorting model'
+    )
+    
     args = parser.parse_args()
     
     # Execute command
     if args.command == 'all':
         run_pipeline(
             args.resume, args.task, args.with_sort, args.rounds,
-            args.extract_model, args.sort_model, args.embedding_model
+            args.extract_model, args.sort_model, args.embedding_model,
+            args.extract_temperature, args.sort_temperature
         )
     elif args.command == 'extract':
-        skills, cost_tracker = run_extract(args.resume, args.extract_model)
+        skills, cost_tracker = run_extract(args.resume, args.extract_model, args.extract_temperature)
         cost_tracker.print_summary()
         cost_tracker.save_report(OUTPUT_DIR / "cost_report_extract.json")
     elif args.command == 'match':
         run_match(args.task, embedding_model=args.embedding_model)
     elif args.command == 'sort':
-        _, cost_tracker = run_sort(args.resume, num_rounds=args.rounds, model=args.sort_model)
+        _, cost_tracker = run_sort(args.resume, num_rounds=args.rounds, model=args.sort_model, 
+                                   temperature=args.sort_temperature)
         cost_tracker.print_summary()
         cost_tracker.save_report(OUTPUT_DIR / "cost_report_sort.json")
     elif args.command == 'list-tasks':
