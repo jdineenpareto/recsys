@@ -2,16 +2,23 @@ import json
 import random
 import requests
 import os
+from pathlib import Path
 from typing import List, Dict, Any
+from utils import CostTracker
+
+OUTPUT_DIR = Path("output")
 
 class SkillExtractor:
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, model: str = "anthropic/claude-3.5-sonnet", 
+                 temperature: float = 0.0, cost_tracker: CostTracker = None):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = "mistralai/mistral-7b-instruct:free"
+        self.model = model
+        self.temperature = temperature
         self.extracted_skills = []
         self.counter = 0
         self.zero_counter_streak = 0
+        self.cost_tracker = cost_tracker or CostTracker(api_key)
 
     def load_resume(self, file_path: str) -> str:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -27,6 +34,7 @@ class SkillExtractor:
 
         data = {
             "model": self.model,
+            "temperature": self.temperature,
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -59,6 +67,10 @@ class SkillExtractor:
 
     def extract_skills(self, resume_path: str) -> List[str]:
         system_prompt = self.load_resume(resume_path)
+        
+        print(f"Loaded resume ({len(system_prompt)} characters)")
+        print(f"Using model: {self.model}")
+        print("Starting with empty skills list\n")
 
         while True:
             if self.zero_counter_streak >= 10:
@@ -72,7 +84,12 @@ class SkillExtractor:
 
             try:
                 response = self.make_api_request(system_prompt, user_prompt)
+                
+                # Track API cost
+                self.cost_tracker.track_api_call(self.model, response, operation="skill_extraction")
+                
                 content = response['choices'][0]['message']['content']
+                print(f"API Response: {content[:100]}...")  # Show first 100 chars for debugging
 
                 # Clean up markdown code blocks if present
                 if content.startswith('```json'):
@@ -125,26 +142,42 @@ class SkillExtractor:
 
         return self.extracted_skills
 
+    def run(self, resume_path: str, output_dir: Path = OUTPUT_DIR) -> tuple:
+        """Main execution method for skill extraction."""
+        print("Starting skill extraction...")
+        print(f"Using model: {self.model} (temperature: {self.temperature})")
+        
+        skills = self.extract_skills(resume_path)
+
+        print(f"\nFinal extracted skills ({len(skills)}):")
+        for i, skill in enumerate(skills, 1):
+            print(f"{i}. {skill}")
+
+        output_dir.mkdir(exist_ok=True)
+        output_file = output_dir / "extracted_skills.json"
+        with open(output_file, "w") as f:
+            json.dump({"skills": skills}, f, indent=2)
+
+        print(f"\nSkills saved to {output_file}")
+        
+        return skills, self.cost_tracker
+
+
 def main():
+    """Standalone entry point for extract.py"""
     api_key = os.getenv('OPENROUTER_API_KEY')
     if not api_key:
         print("Please set OPENROUTER_API_KEY environment variable")
         return
 
-    extractor = SkillExtractor(api_key)
-    resume_path = "resume.txt"
-
-    print("Starting skill extraction...")
-    skills = extractor.extract_skills(resume_path)
-
-    print(f"\nFinal extracted skills ({len(skills)}):")
-    for i, skill in enumerate(skills, 1):
-        print(f"{i}. {skill}")
-
-    with open("extracted_skills.json", "w") as f:
-        json.dump({"skills": skills}, f, indent=2)
-
-    print("\nSkills saved to extracted_skills.json")
+    cost_tracker = CostTracker(api_key)
+    extractor = SkillExtractor(api_key, cost_tracker=cost_tracker)
+    
+    skills, cost_tracker = extractor.run("data/resume.txt")
+    
+    # Print and save cost report
+    cost_tracker.print_summary()
+    cost_tracker.save_report(OUTPUT_DIR / "cost_report_extract.json")
 
 if __name__ == "__main__":
     main()
