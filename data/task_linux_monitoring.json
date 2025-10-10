@@ -1,0 +1,78 @@
+{
+  "task_name": "Deploy and Configure a Monitoring System for Linux Servers",
+  "task_description": "Deploy Nagios monitoring system across multiple RHEL/Linux servers in a VMware virtualized environment. Configure monitoring checks, set up alerts, automate deployment with shell scripts, and manage user access.",
+  "input_nodes": [
+    "Linux Administration",
+    "System Administration",
+    "Nagios",
+    "Monitoring Tools",
+    "RHEL",
+    "VMware",
+    "Shell Scripting",
+    "Bash",
+    "Troubleshooting",
+    "User Account Management",
+    "File System Management",
+    "Networking",
+    "Automation"
+  ],
+  "graph": {
+    "core_linux": {
+      "op": "min",
+      "inputs": ["Linux Administration", "System Administration"],
+      "description": "Core Linux skills (must have both)"
+    },
+    "monitoring_capability": {
+      "op": "max",
+      "inputs": ["Nagios", "Monitoring Tools"],
+      "description": "Monitoring capability (Nagios OR general monitoring tools)"
+    },
+    "platform_knowledge": {
+      "op": "min",
+      "inputs": ["RHEL", "VMware"],
+      "description": "Platform knowledge (RHEL AND VMware)"
+    },
+    "scripting_ability": {
+      "op": "max",
+      "inputs": ["Shell Scripting", "Bash"],
+      "description": "Scripting ability (Shell OR Bash)"
+    },
+    "automation_skills": {
+      "op": "min",
+      "inputs": ["scripting_ability", "Automation"],
+      "description": "Automation skills (scripting AND automation knowledge)"
+    },
+    "system_management": {
+      "op": "max",
+      "inputs": ["User Account Management", "File System Management"],
+      "description": "System management (user management OR file system management)"
+    },
+    "technical_foundation": {
+      "op": "avg",
+      "inputs": ["Troubleshooting", "Networking"],
+      "description": "Technical foundation (troubleshooting and networking both important)"
+    },
+    "core_competency": {
+      "op": "min",
+      "inputs": ["core_linux", "monitoring_capability"],
+      "description": "Core competency (must have core Linux AND monitoring)"
+    },
+    "platform_skills": {
+      "op": "avg",
+      "inputs": ["platform_knowledge", "automation_skills"],
+      "description": "Platform skills (platform knowledge and automation both important)"
+    },
+    "supporting_skills": {
+      "op": "min",
+      "inputs": ["system_management", "technical_foundation"],
+      "description": "Supporting skills (system management AND technical foundation)"
+    },
+    "final_score": {
+      "op": "min",
+      "inputs": ["core_competency", "platform_skills", "supporting_skills"],
+      "description": "Final compatibility (core competency AND platform skills AND supporting skills)"
+    }
+  },
+  "root": "final_score"
+}
+

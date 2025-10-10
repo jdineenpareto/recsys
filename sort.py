@@ -5,6 +5,10 @@ import math
 import random
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
+from pathlib import Path
+from cost_tracker import CostTracker
+
+OUTPUT_DIR = Path("output")
 
 @dataclass
 class TrueSkillRating:
@@ -17,14 +21,15 @@ class TrueSkillRating:
         return self.mu - 3 * self.sigma
 
 class SkillSorter:
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, model: str = "anthropic/claude-3.5-sonnet", cost_tracker: CostTracker = None):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = "mistralai/mistral-7b-instruct:free"
+        self.model = model
         self.resume_content = ""
         self.ratings: Dict[str, TrueSkillRating] = {}
         self.beta = 25.0/6    # Skill difference factor
         self.tau = 25.0/300   # Additive dynamics factor
+        self.cost_tracker = cost_tracker or CostTracker(api_key)
 
     def load_resume(self, file_path: str) -> str:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -78,6 +83,10 @@ class SkillSorter:
 
         try:
             response = self.make_api_request(prompt)
+            
+            # Track API cost
+            self.cost_tracker.track_api_call(self.model, response, operation="skill_comparison")
+            
             content = response['choices'][0]['message']['content'].strip().lower()
             return content == 'true'
         except Exception as e:
@@ -218,51 +227,77 @@ class SkillSorter:
                      key=lambda x: x[1].conservative_rating,
                      reverse=True)
 
+    def run(self, resume_path: str, skills: List[str] = None, skills_file: str = None, 
+            num_rounds: int = None, output_dir: Path = OUTPUT_DIR) -> tuple:
+        """Main execution method for skill sorting."""
+        print("Starting TrueSkill skill sorting...")
+        print(f"Using model: {self.model}")
+        
+        # Load resume
+        self.load_resume(resume_path)
+        
+        # Load skills
+        if skills is None:
+            if skills_file is None:
+                skills_file = str(output_dir / "extracted_skills.json")
+            skills = self.load_skills(skills_file)
+        
+        print(f"Loaded {len(skills)} skills")
+        
+        # Determine rounds
+        if num_rounds is None:
+            num_rounds = max(2, len(skills) // 2)
+        
+        # Run tournament
+        final_rankings = self.run_trueskill_tournament(skills, num_rounds)
+        
+        print("\n🏆 Final TrueSkill Rankings:")
+        final_standings = self.get_current_standings()
+        for i, (skill, rating) in enumerate(final_standings, 1):
+            print(f"{i}. {skill}")
+            print(f"   μ={rating.mu:.2f}, σ={rating.sigma:.2f}, conservative={rating.conservative_rating:.2f}")
+        
+        # Save results
+        result = {
+            "original_skills": skills,
+            "final_rankings": final_rankings,
+            "detailed_ratings": {
+                skill: {
+                    "mu": rating.mu,
+                    "sigma": rating.sigma,
+                    "conservative_rating": rating.conservative_rating
+                }
+                for skill, rating in self.ratings.items()
+            },
+            "algorithm": "TrueSkill",
+            "rounds": num_rounds
+        }
+        
+        output_dir.mkdir(exist_ok=True)
+        output_file = output_dir / "sorted_skills.json"
+        with open(output_file, "w") as f:
+            json.dump(result, f, indent=2)
+        
+        print(f"\nResults saved to {output_file}")
+        
+        return result, self.cost_tracker
+
+
 def main():
+    """Standalone entry point for sort.py"""
     api_key = os.getenv('OPENROUTER_API_KEY')
     if not api_key:
         print("Please set OPENROUTER_API_KEY environment variable")
         return
 
-    sorter = SkillSorter(api_key)
-
-    # Load resume and skills
-    print("Loading resume and skills...")
-    sorter.load_resume("resume.txt")
-    skills = sorter.load_skills("extracted_skills.json")
-
-    print(f"Loaded {len(skills)} skills: {skills}")
-
-    # Run TrueSkill tournament
-    num_rounds = max(2, len(skills) // 2)  # Adaptive number of rounds
-    final_rankings = sorter.run_trueskill_tournament(skills, num_rounds)
-
-    print(f"\n🏆 Final TrueSkill Rankings:")
-    final_standings = sorter.get_current_standings()
-    for i, (skill, rating) in enumerate(final_standings, 1):
-        print(f"{i}. {skill}")
-        print(f"   μ={rating.mu:.2f}, σ={rating.sigma:.2f}, conservative={rating.conservative_rating:.2f}")
-
-    # Save results
-    result = {
-        "original_skills": skills,
-        "final_rankings": final_rankings,
-        "detailed_ratings": {
-            skill: {
-                "mu": rating.mu,
-                "sigma": rating.sigma,
-                "conservative_rating": rating.conservative_rating
-            }
-            for skill, rating in sorter.ratings.items()
-        },
-        "algorithm": "TrueSkill",
-        "rounds": num_rounds
-    }
-
-    with open("sorted_skills.json", "w") as f:
-        json.dump(result, f, indent=2)
-
-    print("\nResults saved to sorted_skills.json")
+    cost_tracker = CostTracker(api_key)
+    sorter = SkillSorter(api_key, cost_tracker=cost_tracker)
+    
+    _, cost_tracker = sorter.run("data/resume.txt")
+    
+    # Print and save cost report
+    cost_tracker.print_summary()
+    cost_tracker.save_report(OUTPUT_DIR / "cost_report_sort.json")
 
 if __name__ == "__main__":
     main()

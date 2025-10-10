@@ -11,3 +11,6 @@ wheels/
 
 # Generated output files
 output/
+
+# Cost reports (optional - remove if you want to commit them)
+cost_report_*.json

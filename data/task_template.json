@@ -1,0 +1,28 @@
+{
+  "task_name": "Your Task Name Here",
+  "task_description": "Detailed description of what this task involves and what the ideal candidate should be able to do.",
+  "input_nodes": [
+    "Skill 1",
+    "Skill 2",
+    "Skill 3"
+  ],
+  "graph": {
+    "node_name_1": {
+      "op": "min",
+      "inputs": ["Skill 1", "Skill 2"],
+      "description": "Description of this requirement (AND - must have both)"
+    },
+    "node_name_2": {
+      "op": "max",
+      "inputs": ["Skill 2", "Skill 3"],
+      "description": "Description of this requirement (OR - can have either)"
+    },
+    "final_score": {
+      "op": "min",
+      "inputs": ["node_name_1", "node_name_2"],
+      "description": "Final compatibility calculation"
+    }
+  },
+  "root": "final_score"
+}
+
