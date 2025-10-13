@@ -12,62 +12,63 @@ from pathlib import Path
 
 class LLM_Gate:
     """
-    LLM-based verification to distinguish between true synonyms and homonyms.
-    Uses OpenRouter API to verify if high embedding similarity indicates actual semantic equivalence.
+    LLM-based verification using configurable filters from JSON.
+    Supports multiple verification checks: homonym detection, specificity filtering, etc.
     """
-    def __init__(self, api_key: Optional[str] = None, model: str = "mistralai/mistral-7b-instruct:free"):
+    def __init__(self, api_key: Optional[str] = None, config_path: str = "taskmatch_filters.json"):
         self.api_key = api_key or os.environ.get('OPENROUTER_API_KEY')
         if not self.api_key:
             print("WARNING: No OPENROUTER_API_KEY found. LLM gate will be disabled.")
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = model
         self.cache = {}  # Cache results to avoid redundant API calls
 
+        # Load filter configuration
+        self.config = self.load_config(config_path)
+        self.model = self.config.get('model', 'google/gemini-flash-1.5')
+        self.filters = self.config.get('filters', [])
+        self.cache_enabled = self.config.get('cache_results', True)
+        self.stop_on_first_pass = self.config.get('stop_on_first_pass', True)
+
+        print(f"[INFO] LLM Gate initialized with {len(self.filters)} filters using model {self.model}")
+
+    def load_config(self, config_path: str) -> dict:
+        """Load filter configuration from JSON file"""
+        try:
+            with open(config_path, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(f"WARNING: Config file {config_path} not found. Using empty filter list.")
+            return {'filters': [], 'model': 'google/gemini-flash-1.5'}
+        except json.JSONDecodeError as e:
+            print(f"WARNING: Error parsing {config_path}: {e}. Using empty filter list.")
+            return {'filters': [], 'model': 'google/gemini-flash-1.5'}
+
     def is_enabled(self) -> bool:
-        """Check if LLM gate is enabled (API key is available)"""
-        return self.api_key is not None
+        """Check if LLM gate is enabled (API key is available and filters configured)"""
+        return self.api_key is not None and len(self.filters) > 0
 
-    def verify_synonym(self, input_node: str, extracted_skill: str, similarity_score: float) -> bool:
+    def run_filter(self, filter_config: dict, input_node: str, extracted_skill: str, similarity_score: float) -> Tuple[bool, str]:
         """
-        Verify if two terms with high embedding similarity are true synonyms.
-
-        Args:
-            input_node: The task requirement term
-            extracted_skill: The candidate's skill term
-            similarity_score: The embedding similarity score [0,1]
+        Run a single filter check via LLM.
 
         Returns:
-            True if they are true synonyms, False if they are homonyms (unrelated despite high similarity)
+            Tuple of (passes_filter, filter_name)
         """
-        if not self.is_enabled():
-            # If no API key, default to accepting high similarity matches
-            return True
+        filter_name = filter_config.get('name', 'unknown')
 
-        # Check cache
-        cache_key = f"{input_node}||{extracted_skill}"
-        if cache_key in self.cache:
-            return self.cache[cache_key]
+        # Check cache if enabled
+        if self.cache_enabled:
+            cache_key = f"{filter_name}||{input_node}||{extracted_skill}"
+            if cache_key in self.cache:
+                return self.cache[cache_key], filter_name
 
-        # Construct verification prompt
-        system_prompt = """You are a semantic verification system. Your job is to determine if two terms mean the same thing (synonyms) or are unrelated despite sounding similar (homonyms).
-
-Examples:
-- "Python Programming" and "Python Development" -> TRUE (synonyms)
-- "Java" and "JavaScript" -> FALSE (homonyms - different languages)
-- "Machine Learning" and "ML" -> TRUE (synonyms)
-- "Windows" and "Windows Operating System" -> TRUE (synonyms)
-- "Apple" (fruit) and "Apple" (company) -> FALSE (homonyms - different domains)
-
-Respond with ONLY "TRUE" if they are synonyms or "FALSE" if they are homonyms."""
-
-        user_prompt = f"""Are these two terms synonyms (mean the same thing)?
-
-Term 1: "{input_node}"
-Term 2: "{extracted_skill}"
-
-Embedding similarity score: {similarity_score:.3f}
-
-Answer TRUE or FALSE:"""
+        system_prompt = filter_config.get('system_prompt', '')
+        user_prompt_template = filter_config.get('user_prompt_template', '')
+        user_prompt = user_prompt_template.format(
+            input_node=input_node,
+            extracted_skill=extracted_skill,
+            similarity_score=similarity_score
+        )
 
         try:
             headers = {
@@ -83,8 +84,8 @@ Answer TRUE or FALSE:"""
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
-                "temperature": 0.1,  # Low temperature for consistent answers
-                "max_tokens": 10
+                "temperature": filter_config.get('temperature', 0.1),
+                "max_tokens": filter_config.get('max_tokens', 10)
             }
 
             response = requests.post(self.base_url, headers=headers, json=data, timeout=30)
@@ -93,20 +94,55 @@ Answer TRUE or FALSE:"""
             result = response.json()
             answer = result['choices'][0]['message']['content'].strip().upper()
 
-            # Parse answer
-            is_synonym = "TRUE" in answer
+            # Check if answer matches pass condition
+            pass_condition = filter_config.get('pass_condition', 'TRUE')
+            passes = pass_condition in answer
 
             # Cache result
-            self.cache[cache_key] = is_synonym
+            if self.cache_enabled:
+                cache_key = f"{filter_name}||{input_node}||{extracted_skill}"
+                self.cache[cache_key] = passes
 
-            print(f"LLM Gate: '{input_node}' vs '{extracted_skill}' -> {'SYNONYM' if is_synonym else 'HOMONYM'} (sim={similarity_score:.3f})")
-
-            return is_synonym
+            return passes, filter_name
 
         except Exception as e:
-            print(f"LLM Gate error: {e}. Defaulting to accepting match.")
-            # On error, default to accepting the match
+            print(f"  [ERROR] Filter '{filter_name}' failed: {e}. Defaulting to PASS.")
+            return True, filter_name
+
+    def verify_synonym(self, input_node: str, extracted_skill: str, similarity_score: float) -> bool:
+        """
+        Verify if two terms pass all configured filters.
+
+        Args:
+            input_node: The task requirement term
+            extracted_skill: The candidate's skill term
+            similarity_score: The embedding similarity score [0,1]
+
+        Returns:
+            True if passes all filters, False otherwise
+        """
+        if not self.is_enabled():
+            # If no API key or no filters, default to accepting high similarity matches
             return True
+
+        # Run each enabled filter
+        for filter_config in self.filters:
+            if not filter_config.get('enabled', True):
+                continue
+
+            passes, filter_name = self.run_filter(filter_config, input_node, extracted_skill, similarity_score)
+
+            if not passes:
+                print(f"  [REJECTED] '{extracted_skill}' failed filter '{filter_name}' for '{input_node}' (sim={similarity_score:.3f})")
+                return False
+
+            if self.stop_on_first_pass:
+                print(f"  [OK] '{extracted_skill}' passed filter '{filter_name}' for '{input_node}' (sim={similarity_score:.3f})")
+                return True
+
+        # All filters passed
+        print(f"  [OK] '{extracted_skill}' passed all filters for '{input_node}' (sim={similarity_score:.3f})")
+        return True
 
 # Define a task suitable for Ebony Moore: "Deploy and Configure a Monitoring System for Linux Servers"
 # This task involves setting up Nagios/Zabbix monitoring across multiple Linux servers
@@ -962,13 +998,17 @@ def main():
         print("\n" + "=" * 80)
         print("INITIALIZING LLM GATE")
         print("=" * 80)
-        llm_gate = LLM_Gate(model=args.llm_gate_model)
+        llm_gate = LLM_Gate(config_path="taskmatch_filters.json")
         if llm_gate.is_enabled():
-            print(f"LLM gate enabled with model: {args.llm_gate_model}")
+            print(f"LLM gate enabled with model: {llm_gate.model}")
+            print(f"Number of filters: {len(llm_gate.filters)}")
             print(f"Threshold: {args.llm_gate_threshold}")
-            print("Will verify high-similarity matches to filter homonyms")
+            print("Filters configured:")
+            for f in llm_gate.filters:
+                status = "ENABLED" if f.get('enabled', True) else "DISABLED"
+                print(f"  - {f.get('name', 'unknown')}: {status}")
         else:
-            print("LLM gate disabled (no API key found)")
+            print("LLM gate disabled (no API key found or no filters configured)")
             llm_gate = None
 
     # Evaluate task compatibility

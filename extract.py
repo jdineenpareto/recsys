@@ -5,10 +5,10 @@ import os
 from typing import List, Dict, Any
 
 class SkillExtractor:
-    def __init__(self, api_key: str, use_verification_gate: bool = False):
+    def __init__(self, api_key: str, use_verification_gate: bool = False, model: str = "google/gemini-flash-1.5"):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-        self.model = "mistralai/mistral-7b-instruct:free"
+        self.model = model
         self.extracted_skills = []
         self.counter = 0
         self.zero_counter_streak = 0
@@ -219,6 +219,8 @@ def main():
                        help='Path to resume file (default: resume.txt)')
     parser.add_argument('--output', type=str, default='extracted_skills.json',
                        help='Output JSON file (default: extracted_skills.json)')
+    parser.add_argument('--model', type=str, default='google/gemini-2.5-flash-lite',
+                       help='Model to use for extraction (default: google/gemini-flash-1.5)')
 
     args = parser.parse_args()
 
@@ -234,12 +236,13 @@ def main():
         print("Please set OPENROUTER_API_KEY environment variable")
         return
 
-    extractor = SkillExtractor(api_key, use_verification_gate=args.verify_evidence)
+    extractor = SkillExtractor(api_key, use_verification_gate=args.verify_evidence, model=args.model)
 
     # Load and validate resume
     with open(args.resume, 'r', encoding='utf-8') as f:
         resume_content = f.read()
     print(f"Loaded resume from '{args.resume}': {len(resume_content)} characters")
+    print(f"Using model: {args.model}")
 
     if args.verify_evidence:
         print("Verification gate ENABLED - will check if skills are directly supported by resume")
