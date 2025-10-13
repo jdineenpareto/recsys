@@ -1,0 +1,3098 @@
+{
+  "task": {
+    "task_name": "Deploy and Configure a Monitoring System for Linux Servers",
+    "input_nodes": [
+      "Linux Administration",
+      "System Administration",
+      "Nagios",
+      "Monitoring Tools",
+      "RHEL",
+      "VMware",
+      "Shell Scripting",
+      "Bash",
+      "Troubleshooting",
+      "User Account Management",
+      "File System Management",
+      "Networking",
+      "Automation"
+    ],
+    "graph": {
+      "core_linux": {
+        "op": "min",
+        "inputs": [
+          "Linux Administration",
+          "System Administration"
+        ]
+      },
+      "monitoring_capability": {
+        "op": "max",
+        "inputs": [
+          "Nagios",
+          "Monitoring Tools"
+        ]
+      },
+      "platform_knowledge": {
+        "op": "min",
+        "inputs": [
+          "RHEL",
+          "VMware"
+        ]
+      },
+      "scripting_ability": {
+        "op": "max",
+        "inputs": [
+          "Shell Scripting",
+          "Bash"
+        ]
+      },
+      "automation_skills": {
+        "op": "min",
+        "inputs": [
+          "scripting_ability",
+          "Automation"
+        ]
+      },
+      "system_management": {
+        "op": "max",
+        "inputs": [
+          "User Account Management",
+          "File System Management"
+        ]
+      },
+      "technical_foundation": {
+        "op": "avg",
+        "inputs": [
+          "Troubleshooting",
+          "Networking"
+        ]
+      },
+      "core_competency": {
+        "op": "min",
+        "inputs": [
+          "core_linux",
+          "monitoring_capability"
+        ]
+      },
+      "platform_skills": {
+        "op": "avg",
+        "inputs": [
+          "platform_knowledge",
+          "automation_skills"
+        ]
+      },
+      "supporting_skills": {
+        "op": "min",
+        "inputs": [
+          "system_management",
+          "technical_foundation"
+        ]
+      },
+      "final_score": {
+        "op": "avg",
+        "inputs": [
+          "core_competency",
+          "platform_skills",
+          "supporting_skills"
+        ]
+      }
+    },
+    "root": "final_score"
+  },
+  "results": [
+    {
+      "rank": 1,
+      "skill": "Software",
+      "compatibility_score": 0.6855573654174805
+    },
+    {
+      "rank": 2,
+      "skill": "System Administration Tools",
+      "compatibility_score": 0.6795782446861267
+    },
+    {
+      "rank": 3,
+      "skill": "System Software",
+      "compatibility_score": 0.6787368655204773
+    },
+    {
+      "rank": 4,
+      "skill": "System Administration",
+      "compatibility_score": 0.66476970911026
+    },
+    {
+      "rank": 5,
+      "skill": "Systems Management",
+      "compatibility_score": 0.6645197868347168
+    },
+    {
+      "rank": 6,
+      "skill": "Systems Administration",
+      "compatibility_score": 0.6617424488067627
+    },
+    {
+      "rank": 7,
+      "skill": "Software Management",
+      "compatibility_score": 0.6605110764503479
+    },
+    {
+      "rank": 8,
+      "skill": "System Maintenance",
+      "compatibility_score": 0.6599148511886597
+    },
+    {
+      "rank": 9,
+      "skill": "Computer Systems",
+      "compatibility_score": 0.6583276391029358
+    },
+    {
+      "rank": 10,
+      "skill": "Server",
+      "compatibility_score": 0.6580395698547363
+    },
+    {
+      "rank": 11,
+      "skill": "System Programming",
+      "compatibility_score": 0.6579582095146179
+    },
+    {
+      "rank": 12,
+      "skill": "Network Administration",
+      "compatibility_score": 0.6541030406951904
+    },
+    {
+      "rank": 13,
+      "skill": "Systems Programming",
+      "compatibility_score": 0.6530113220214844
+    },
+    {
+      "rank": 14,
+      "skill": "Server Administration",
+      "compatibility_score": 0.6518182754516602
+    },
+    {
+      "rank": 15,
+      "skill": "Server Management",
+      "compatibility_score": 0.651423990726471
+    },
+    {
+      "rank": 16,
+      "skill": "Network Management",
+      "compatibility_score": 0.6513286828994751
+    },
+    {
+      "rank": 17,
+      "skill": "System Monitoring",
+      "compatibility_score": 0.6504635214805603
+    },
+    {
+      "rank": 18,
+      "skill": "Systems",
+      "compatibility_score": 0.6489068865776062
+    },
+    {
+      "rank": 19,
+      "skill": "System Engineering",
+      "compatibility_score": 0.6477363705635071
+    },
+    {
+      "rank": 20,
+      "skill": "Computer Maintenance",
+      "compatibility_score": 0.647471010684967
+    },
+    {
+      "rank": 21,
+      "skill": "Middleware",
+      "compatibility_score": 0.6463574767112732
+    },
+    {
+      "rank": 22,
+      "skill": "Computer",
+      "compatibility_score": 0.6460475325584412
+    },
+    {
+      "rank": 23,
+      "skill": "Linux",
+      "compatibility_score": 0.6456255316734314
+    },
+    {
+      "rank": 24,
+      "skill": "Software Development",
+      "compatibility_score": 0.645064651966095
+    },
+    {
+      "rank": 25,
+      "skill": "Remote Management",
+      "compatibility_score": 0.6448199152946472
+    },
+    {
+      "rank": 26,
+      "skill": "Computer Operation",
+      "compatibility_score": 0.6444125771522522
+    },
+    {
+      "rank": 27,
+      "skill": "Linux System Administration",
+      "compatibility_score": 0.6434944272041321
+    },
+    {
+      "rank": 28,
+      "skill": "Remote System Administration",
+      "compatibility_score": 0.6430602669715881
+    },
+    {
+      "rank": 29,
+      "skill": "User Management",
+      "compatibility_score": 0.6429200172424316
+    },
+    {
+      "rank": 30,
+      "skill": "Linux System",
+      "compatibility_score": 0.64286208152771
+    },
+    {
+      "rank": 31,
+      "skill": "Open Source",
+      "compatibility_score": 0.6425737738609314
+    },
+    {
+      "rank": 32,
+      "skill": "Service Management",
+      "compatibility_score": 0.6424815058708191
+    },
+    {
+      "rank": 33,
+      "skill": "Systems Engineering",
+      "compatibility_score": 0.6413522958755493
+    },
+    {
+      "rank": 34,
+      "skill": "IT Management",
+      "compatibility_score": 0.6409949064254761
+    },
+    {
+      "rank": 35,
+      "skill": "Server Infrastructure",
+      "compatibility_score": 0.6408853530883789
+    },
+    {
+      "rank": 36,
+      "skill": "Data Management",
+      "compatibility_score": 0.640781044960022
+    },
+    {
+      "rank": 37,
+      "skill": "Operating System",
+      "compatibility_score": 0.6405243277549744
+    },
+    {
+      "rank": 38,
+      "skill": "System Architect",
+      "compatibility_score": 0.6398829817771912
+    },
+    {
+      "rank": 39,
+      "skill": "Programming",
+      "compatibility_score": 0.6389830708503723
+    },
+    {
+      "rank": 40,
+      "skill": "Linux Administration",
+      "compatibility_score": 0.6386098265647888
+    },
+    {
+      "rank": 41,
+      "skill": "Systems Analysis",
+      "compatibility_score": 0.6383041739463806
+    },
+    {
+      "rank": 42,
+      "skill": "Problem Management",
+      "compatibility_score": 0.6379728317260742
+    },
+    {
+      "rank": 43,
+      "skill": "Automation",
+      "compatibility_score": 0.6376428008079529
+    },
+    {
+      "rank": 44,
+      "skill": "Operating Systems",
+      "compatibility_score": 0.6374497413635254
+    },
+    {
+      "rank": 45,
+      "skill": "System Security Administration",
+      "compatibility_score": 0.6369842290878296
+    },
+    {
+      "rank": 46,
+      "skill": "Server Maintenance",
+      "compatibility_score": 0.6367040276527405
+    },
+    {
+      "rank": 47,
+      "skill": "Web Servers",
+      "compatibility_score": 0.6363652348518372
+    },
+    {
+      "rank": 48,
+      "skill": "System Design",
+      "compatibility_score": 0.6357883810997009
+    },
+    {
+      "rank": 49,
+      "skill": "Database Administration",
+      "compatibility_score": 0.6355401873588562
+    },
+    {
+      "rank": 50,
+      "skill": "System Monitoring Tools",
+      "compatibility_score": 0.6349443197250366
+    },
+    {
+      "rank": 51,
+      "skill": "System Automation",
+      "compatibility_score": 0.6341202855110168
+    },
+    {
+      "rank": 52,
+      "skill": "Open Source Software",
+      "compatibility_score": 0.6340822577476501
+    },
+    {
+      "rank": 53,
+      "skill": "Operating System Troubleshooting",
+      "compatibility_score": 0.6340270638465881
+    },
+    {
+      "rank": 54,
+      "skill": "System Administration Skills",
+      "compatibility_score": 0.6340134739875793
+    },
+    {
+      "rank": 55,
+      "skill": "CentOS",
+      "compatibility_score": 0.633859395980835
+    },
+    {
+      "rank": 56,
+      "skill": "Scripting",
+      "compatibility_score": 0.633645236492157
+    },
+    {
+      "rank": 57,
+      "skill": "Configuration Management Systems",
+      "compatibility_score": 0.6331385970115662
+    },
+    {
+      "rank": 58,
+      "skill": "System Analysis",
+      "compatibility_score": 0.6326773762702942
+    },
+    {
+      "rank": 59,
+      "skill": "Software Development Tools",
+      "compatibility_score": 0.6325989365577698
+    },
+    {
+      "rank": 60,
+      "skill": "Process Management",
+      "compatibility_score": 0.6322925090789795
+    },
+    {
+      "rank": 61,
+      "skill": "Monitoring Tools",
+      "compatibility_score": 0.6320584416389465
+    },
+    {
+      "rank": 62,
+      "skill": "Network Security Administration",
+      "compatibility_score": 0.6319373250007629
+    },
+    {
+      "rank": 63,
+      "skill": "AWS",
+      "compatibility_score": 0.6312002539634705
+    },
+    {
+      "rank": 64,
+      "skill": "Linux Server",
+      "compatibility_score": 0.6307010054588318
+    },
+    {
+      "rank": 65,
+      "skill": "Python",
+      "compatibility_score": 0.6306132674217224
+    },
+    {
+      "rank": 66,
+      "skill": "User Administration",
+      "compatibility_score": 0.6303508877754211
+    },
+    {
+      "rank": 67,
+      "skill": "Database Management",
+      "compatibility_score": 0.6302346587181091
+    },
+    {
+      "rank": 68,
+      "skill": "Software Engineering",
+      "compatibility_score": 0.6296871900558472
+    },
+    {
+      "rank": 69,
+      "skill": "Resource Management",
+      "compatibility_score": 0.6292708516120911
+    },
+    {
+      "rank": 70,
+      "skill": "Cloud",
+      "compatibility_score": 0.6291729211807251
+    },
+    {
+      "rank": 71,
+      "skill": "System Integration",
+      "compatibility_score": 0.6291612982749939
+    },
+    {
+      "rank": 72,
+      "skill": "IT Service Management",
+      "compatibility_score": 0.6290392279624939
+    },
+    {
+      "rank": 73,
+      "skill": "Cloud Administration",
+      "compatibility_score": 0.6289741396903992
+    },
+    {
+      "rank": 74,
+      "skill": "Ansible",
+      "compatibility_score": 0.62872713804245
+    },
+    {
+      "rank": 75,
+      "skill": "Computer Science",
+      "compatibility_score": 0.6286668181419373
+    },
+    {
+      "rank": 76,
+      "skill": "Linux Server Administration",
+      "compatibility_score": 0.6282792687416077
+    },
+    {
+      "rank": 77,
+      "skill": "Security Tools",
+      "compatibility_score": 0.6278737187385559
+    },
+    {
+      "rank": 78,
+      "skill": "Operating System Administration",
+      "compatibility_score": 0.6269513964653015
+    },
+    {
+      "rank": 79,
+      "skill": "Command Line Interface",
+      "compatibility_score": 0.6269184350967407
+    },
+    {
+      "rank": 80,
+      "skill": "Monitoring",
+      "compatibility_score": 0.6268951296806335
+    },
+    {
+      "rank": 81,
+      "skill": "Remote Administration",
+      "compatibility_score": 0.6267533898353577
+    },
+    {
+      "rank": 82,
+      "skill": "Configuration Management",
+      "compatibility_score": 0.6265830397605896
+    },
+    {
+      "rank": 83,
+      "skill": "Windows",
+      "compatibility_score": 0.6265026926994324
+    },
+    {
+      "rank": 84,
+      "skill": "Systems Integration",
+      "compatibility_score": 0.6262122392654419
+    },
+    {
+      "rank": 85,
+      "skill": "Service Desk",
+      "compatibility_score": 0.6260619759559631
+    },
+    {
+      "rank": 86,
+      "skill": "Security",
+      "compatibility_score": 0.6257129311561584
+    },
+    {
+      "rank": 87,
+      "skill": "Device Management",
+      "compatibility_score": 0.6255404353141785
+    },
+    {
+      "rank": 88,
+      "skill": "System Monitoring Solutions",
+      "compatibility_score": 0.6253743767738342
+    },
+    {
+      "rank": 89,
+      "skill": "Security Operations",
+      "compatibility_score": 0.6253499388694763
+    },
+    {
+      "rank": 90,
+      "skill": "Application Development",
+      "compatibility_score": 0.625303328037262
+    },
+    {
+      "rank": 91,
+      "skill": "Software Configuration",
+      "compatibility_score": 0.6250563859939575
+    },
+    {
+      "rank": 92,
+      "skill": "System Security",
+      "compatibility_score": 0.6250115036964417
+    },
+    {
+      "rank": 93,
+      "skill": "IT Operations Management",
+      "compatibility_score": 0.6248469948768616
+    },
+    {
+      "rank": 94,
+      "skill": "Technical Administration",
+      "compatibility_score": 0.6244338154792786
+    },
+    {
+      "rank": 95,
+      "skill": "Shell",
+      "compatibility_score": 0.624360978603363
+    },
+    {
+      "rank": 96,
+      "skill": "Cloud Management",
+      "compatibility_score": 0.6243090033531189
+    },
+    {
+      "rank": 97,
+      "skill": "Cloud Computing",
+      "compatibility_score": 0.623587429523468
+    },
+    {
+      "rank": 98,
+      "skill": "User Training",
+      "compatibility_score": 0.6233080625534058
+    },
+    {
+      "rank": 99,
+      "skill": "Configuration Management Tools",
+      "compatibility_score": 0.6232328414916992
+    },
+    {
+      "rank": 100,
+      "skill": "Application Servers",
+      "compatibility_score": 0.6229886412620544
+    },
+    {
+      "rank": 101,
+      "skill": "Customer Support",
+      "compatibility_score": 0.6226257681846619
+    },
+    {
+      "rank": 102,
+      "skill": "Web Applications",
+      "compatibility_score": 0.6222557425498962
+    },
+    {
+      "rank": 103,
+      "skill": "Business Operations",
+      "compatibility_score": 0.6221657991409302
+    },
+    {
+      "rank": 104,
+      "skill": "IT Project Management",
+      "compatibility_score": 0.6218900680541992
+    },
+    {
+      "rank": 105,
+      "skill": "Security Management",
+      "compatibility_score": 0.6216334700584412
+    },
+    {
+      "rank": 106,
+      "skill": "User Support Tools",
+      "compatibility_score": 0.6216018199920654
+    },
+    {
+      "rank": 107,
+      "skill": "Monitoring Solutions",
+      "compatibility_score": 0.6215990781784058
+    },
+    {
+      "rank": 108,
+      "skill": "Customer Service",
+      "compatibility_score": 0.6214702129364014
+    },
+    {
+      "rank": 109,
+      "skill": "Programming Languages",
+      "compatibility_score": 0.621268093585968
+    },
+    {
+      "rank": 110,
+      "skill": "Web Services",
+      "compatibility_score": 0.6212659478187561
+    },
+    {
+      "rank": 111,
+      "skill": "Command-Line Interface",
+      "compatibility_score": 0.6212530732154846
+    },
+    {
+      "rank": 112,
+      "skill": "System Performance",
+      "compatibility_score": 0.6211698651313782
+    },
+    {
+      "rank": 113,
+      "skill": "Software Testing",
+      "compatibility_score": 0.6211283206939697
+    },
+    {
+      "rank": 114,
+      "skill": "Database Servers",
+      "compatibility_score": 0.6208716034889221
+    },
+    {
+      "rank": 115,
+      "skill": "Hardware Maintenance",
+      "compatibility_score": 0.6207569241523743
+    },
+    {
+      "rank": 116,
+      "skill": "Databases",
+      "compatibility_score": 0.6203201413154602
+    },
+    {
+      "rank": 117,
+      "skill": "System Troubleshooting",
+      "compatibility_score": 0.6203130483627319
+    },
+    {
+      "rank": 118,
+      "skill": "System Security Monitoring",
+      "compatibility_score": 0.6202490329742432
+    },
+    {
+      "rank": 119,
+      "skill": "IT Automation",
+      "compatibility_score": 0.6202059388160706
+    },
+    {
+      "rank": 120,
+      "skill": "Command Line Tools",
+      "compatibility_score": 0.6199832558631897
+    },
+    {
+      "rank": 121,
+      "skill": "Automation Tools",
+      "compatibility_score": 0.6198809146881104
+    },
+    {
+      "rank": 122,
+      "skill": "Team Management",
+      "compatibility_score": 0.6195688247680664
+    },
+    {
+      "rank": 123,
+      "skill": "Configuration",
+      "compatibility_score": 0.6195380091667175
+    },
+    {
+      "rank": 124,
+      "skill": "System Troubleshooting Tools",
+      "compatibility_score": 0.619484007358551
+    },
+    {
+      "rank": 125,
+      "skill": "Red Hat Enterprise Linux",
+      "compatibility_score": 0.6193356513977051
+    },
+    {
+      "rank": 126,
+      "skill": "Collaboration Tools",
+      "compatibility_score": 0.6191191077232361
+    },
+    {
+      "rank": 127,
+      "skill": "System Design and Architecture",
+      "compatibility_score": 0.6190776824951172
+    },
+    {
+      "rank": 128,
+      "skill": "Security Monitoring",
+      "compatibility_score": 0.6184512972831726
+    },
+    {
+      "rank": 129,
+      "skill": "File Management",
+      "compatibility_score": 0.6184274554252625
+    },
+    {
+      "rank": 130,
+      "skill": "Windows Server Administration",
+      "compatibility_score": 0.6184118390083313
+    },
+    {
+      "rank": 131,
+      "skill": "System and Network Security",
+      "compatibility_score": 0.6183072328567505
+    },
+    {
+      "rank": 132,
+      "skill": "Version Control",
+      "compatibility_score": 0.6180023550987244
+    },
+    {
+      "rank": 133,
+      "skill": "System Configuration",
+      "compatibility_score": 0.6179025173187256
+    },
+    {
+      "rank": 134,
+      "skill": "Scripting Tools",
+      "compatibility_score": 0.6178984642028809
+    },
+    {
+      "rank": 135,
+      "skill": "Command Line Interface Tools",
+      "compatibility_score": 0.617847204208374
+    },
+    {
+      "rank": 136,
+      "skill": "Data Science",
+      "compatibility_score": 0.6177950501441956
+    },
+    {
+      "rank": 137,
+      "skill": "Technical Support",
+      "compatibility_score": 0.6177220940589905
+    },
+    {
+      "rank": 138,
+      "skill": "Red Hat Linux",
+      "compatibility_score": 0.6169770359992981
+    },
+    {
+      "rank": 139,
+      "skill": "Log Management",
+      "compatibility_score": 0.6169267892837524
+    },
+    {
+      "rank": 140,
+      "skill": "Git",
+      "compatibility_score": 0.6168230772018433
+    },
+    {
+      "rank": 141,
+      "skill": "Software Configuration Management",
+      "compatibility_score": 0.616685688495636
+    },
+    {
+      "rank": 142,
+      "skill": "Windows Administration",
+      "compatibility_score": 0.6164135336875916
+    },
+    {
+      "rank": 143,
+      "skill": "System Documentation",
+      "compatibility_score": 0.6160884499549866
+    },
+    {
+      "rank": 144,
+      "skill": "Command-Line",
+      "compatibility_score": 0.6159557700157166
+    },
+    {
+      "rank": 145,
+      "skill": "User Support",
+      "compatibility_score": 0.6159486174583435
+    },
+    {
+      "rank": 146,
+      "skill": "Data Analysis",
+      "compatibility_score": 0.6157625317573547
+    },
+    {
+      "rank": 147,
+      "skill": "Infrastructure Management",
+      "compatibility_score": 0.6157386898994446
+    },
+    {
+      "rank": 148,
+      "skill": "Shell Scripting",
+      "compatibility_score": 0.6155322194099426
+    },
+    {
+      "rank": 149,
+      "skill": "Computer Networking",
+      "compatibility_score": 0.6154157519340515
+    },
+    {
+      "rank": 150,
+      "skill": "Version Control Systems",
+      "compatibility_score": 0.6152980923652649
+    },
+    {
+      "rank": 151,
+      "skill": "CLI",
+      "compatibility_score": 0.6148257851600647
+    },
+    {
+      "rank": 152,
+      "skill": "Network Security Tools",
+      "compatibility_score": 0.6148091554641724
+    },
+    {
+      "rank": 153,
+      "skill": "IT Infrastructure",
+      "compatibility_score": 0.6147841811180115
+    },
+    {
+      "rank": 154,
+      "skill": "System Architecture",
+      "compatibility_score": 0.6145225763320923
+    },
+    {
+      "rank": 155,
+      "skill": "Web Programming",
+      "compatibility_score": 0.6143378615379333
+    },
+    {
+      "rank": 156,
+      "skill": "System Design and Implementation",
+      "compatibility_score": 0.6142489314079285
+    },
+    {
+      "rank": 157,
+      "skill": "Network Infrastructure",
+      "compatibility_score": 0.6142403483390808
+    },
+    {
+      "rank": 158,
+      "skill": "Technical Expertise",
+      "compatibility_score": 0.6141924262046814
+    },
+    {
+      "rank": 159,
+      "skill": "Web Technologies",
+      "compatibility_score": 0.6141247749328613
+    },
+    {
+      "rank": 160,
+      "skill": "Command Line",
+      "compatibility_score": 0.6139947772026062
+    },
+    {
+      "rank": 161,
+      "skill": "Service Design",
+      "compatibility_score": 0.6139585375785828
+    },
+    {
+      "rank": 162,
+      "skill": "System Optimization",
+      "compatibility_score": 0.6137442588806152
+    },
+    {
+      "rank": 163,
+      "skill": "Software Troubleshooting",
+      "compatibility_score": 0.6136648654937744
+    },
+    {
+      "rank": 164,
+      "skill": "Computer Literacy",
+      "compatibility_score": 0.6136159896850586
+    },
+    {
+      "rank": 165,
+      "skill": "Red Hat Linux Administration",
+      "compatibility_score": 0.6135991215705872
+    },
+    {
+      "rank": 166,
+      "skill": "Systems Thinking",
+      "compatibility_score": 0.6135887503623962
+    },
+    {
+      "rank": 167,
+      "skill": "Firewall Management",
+      "compatibility_score": 0.613264799118042
+    },
+    {
+      "rank": 168,
+      "skill": "Computer Skills",
+      "compatibility_score": 0.6131766438484192
+    },
+    {
+      "rank": 169,
+      "skill": "Version Control System",
+      "compatibility_score": 0.6128642559051514
+    },
+    {
+      "rank": 170,
+      "skill": "Technical Project Management",
+      "compatibility_score": 0.6127834320068359
+    },
+    {
+      "rank": 171,
+      "skill": "Nagios",
+      "compatibility_score": 0.6127715110778809
+    },
+    {
+      "rank": 172,
+      "skill": "File System Administration",
+      "compatibility_score": 0.6122999787330627
+    },
+    {
+      "rank": 173,
+      "skill": "Windows Server",
+      "compatibility_score": 0.6120699644088745
+    },
+    {
+      "rank": 174,
+      "skill": "Firewalls",
+      "compatibility_score": 0.6119475960731506
+    },
+    {
+      "rank": 175,
+      "skill": "Networking",
+      "compatibility_score": 0.6115872263908386
+    },
+    {
+      "rank": 176,
+      "skill": "Security Controls",
+      "compatibility_score": 0.6114192605018616
+    },
+    {
+      "rank": 177,
+      "skill": "Performance Monitoring",
+      "compatibility_score": 0.6114135384559631
+    },
+    {
+      "rank": 178,
+      "skill": "System Logging",
+      "compatibility_score": 0.6112886071205139
+    },
+    {
+      "rank": 179,
+      "skill": "Process Automation",
+      "compatibility_score": 0.6112119555473328
+    },
+    {
+      "rank": 180,
+      "skill": "Cloud Management Platforms",
+      "compatibility_score": 0.6111546158790588
+    },
+    {
+      "rank": 181,
+      "skill": "Network Security Management",
+      "compatibility_score": 0.6110867857933044
+    },
+    {
+      "rank": 182,
+      "skill": "Cloud Infrastructure",
+      "compatibility_score": 0.6110436320304871
+    },
+    {
+      "rank": 183,
+      "skill": "Hardware",
+      "compatibility_score": 0.6109691262245178
+    },
+    {
+      "rank": 184,
+      "skill": "SaaS",
+      "compatibility_score": 0.6107513308525085
+    },
+    {
+      "rank": 185,
+      "skill": "Web Development",
+      "compatibility_score": 0.610653281211853
+    },
+    {
+      "rank": 186,
+      "skill": "System Audit",
+      "compatibility_score": 0.6105782985687256
+    },
+    {
+      "rank": 187,
+      "skill": "Disk Management",
+      "compatibility_score": 0.6105666160583496
+    },
+    {
+      "rank": 188,
+      "skill": "Puppet",
+      "compatibility_score": 0.6104923486709595
+    },
+    {
+      "rank": 189,
+      "skill": "Automation Scripting",
+      "compatibility_score": 0.6103888154029846
+    },
+    {
+      "rank": 190,
+      "skill": "Access Management",
+      "compatibility_score": 0.6103035807609558
+    },
+    {
+      "rank": 191,
+      "skill": "Infrastructure Automation",
+      "compatibility_score": 0.6101652979850769
+    },
+    {
+      "rank": 192,
+      "skill": "System Optimization Tools",
+      "compatibility_score": 0.6100842356681824
+    },
+    {
+      "rank": 193,
+      "skill": "Database Management Skills",
+      "compatibility_score": 0.6100709438323975
+    },
+    {
+      "rank": 194,
+      "skill": "IT Operations",
+      "compatibility_score": 0.6098772883415222
+    },
+    {
+      "rank": 195,
+      "skill": "Software Development Life Cycle",
+      "compatibility_score": 0.6097890734672546
+    },
+    {
+      "rank": 196,
+      "skill": "IT Security Management",
+      "compatibility_score": 0.6097667813301086
+    },
+    {
+      "rank": 197,
+      "skill": "Incident Management",
+      "compatibility_score": 0.609410285949707
+    },
+    {
+      "rank": 198,
+      "skill": "Cloud Technologies",
+      "compatibility_score": 0.6093069911003113
+    },
+    {
+      "rank": 199,
+      "skill": "Network Configuration Management",
+      "compatibility_score": 0.6091888546943665
+    },
+    {
+      "rank": 200,
+      "skill": "Data",
+      "compatibility_score": 0.6090075373649597
+    },
+    {
+      "rank": 201,
+      "skill": "Account Management",
+      "compatibility_score": 0.6084457039833069
+    },
+    {
+      "rank": 202,
+      "skill": "Computer Hardware",
+      "compatibility_score": 0.6084201335906982
+    },
+    {
+      "rank": 203,
+      "skill": "IT Infrastructure Management",
+      "compatibility_score": 0.6083582043647766
+    },
+    {
+      "rank": 204,
+      "skill": "Data Center Management",
+      "compatibility_score": 0.6082578897476196
+    },
+    {
+      "rank": 205,
+      "skill": "Documentation",
+      "compatibility_score": 0.6080553531646729
+    },
+    {
+      "rank": 206,
+      "skill": "System Build",
+      "compatibility_score": 0.6080403923988342
+    },
+    {
+      "rank": 207,
+      "skill": "Software Updates",
+      "compatibility_score": 0.607949435710907
+    },
+    {
+      "rank": 208,
+      "skill": "File Systems",
+      "compatibility_score": 0.6078277230262756
+    },
+    {
+      "rank": 209,
+      "skill": "Agile",
+      "compatibility_score": 0.6074690818786621
+    },
+    {
+      "rank": 210,
+      "skill": "Security Incident Management",
+      "compatibility_score": 0.6074686646461487
+    },
+    {
+      "rank": 211,
+      "skill": "Performance",
+      "compatibility_score": 0.6071988940238953
+    },
+    {
+      "rank": 212,
+      "skill": "Bash",
+      "compatibility_score": 0.6071040034294128
+    },
+    {
+      "rank": 213,
+      "skill": "BASH",
+      "compatibility_score": 0.6071040034294128
+    },
+    {
+      "rank": 214,
+      "skill": "System Images",
+      "compatibility_score": 0.6071036458015442
+    },
+    {
+      "rank": 215,
+      "skill": "Command",
+      "compatibility_score": 0.6070160269737244
+    },
+    {
+      "rank": 216,
+      "skill": "Technical Documentation",
+      "compatibility_score": 0.6068181395530701
+    },
+    {
+      "rank": 217,
+      "skill": "Computer Repair",
+      "compatibility_score": 0.6068117022514343
+    },
+    {
+      "rank": 218,
+      "skill": "API",
+      "compatibility_score": 0.6066476702690125
+    },
+    {
+      "rank": 219,
+      "skill": "Business Analysis",
+      "compatibility_score": 0.606563150882721
+    },
+    {
+      "rank": 220,
+      "skill": "Linux Networking",
+      "compatibility_score": 0.6064502596855164
+    },
+    {
+      "rank": 221,
+      "skill": "File Sharing",
+      "compatibility_score": 0.6060632467269897
+    },
+    {
+      "rank": 222,
+      "skill": "Technical",
+      "compatibility_score": 0.6059033274650574
+    },
+    {
+      "rank": 223,
+      "skill": "System Updates",
+      "compatibility_score": 0.605599582195282
+    },
+    {
+      "rank": 224,
+      "skill": "FTP",
+      "compatibility_score": 0.6055821776390076
+    },
+    {
+      "rank": 225,
+      "skill": "Collaboration",
+      "compatibility_score": 0.6055600047111511
+    },
+    {
+      "rank": 226,
+      "skill": "Email",
+      "compatibility_score": 0.6055567264556885
+    },
+    {
+      "rank": 227,
+      "skill": "Requirements Analysis",
+      "compatibility_score": 0.6053667068481445
+    },
+    {
+      "rank": 228,
+      "skill": "System Tuning",
+      "compatibility_score": 0.6053116917610168
+    },
+    {
+      "rank": 229,
+      "skill": "Change Management",
+      "compatibility_score": 0.6052867770195007
+    },
+    {
+      "rank": 230,
+      "skill": "Operating System Concepts",
+      "compatibility_score": 0.6052023768424988
+    },
+    {
+      "rank": 231,
+      "skill": "Virtual Machines",
+      "compatibility_score": 0.6051985621452332
+    },
+    {
+      "rank": 232,
+      "skill": "Technical Leadership",
+      "compatibility_score": 0.6050915122032166
+    },
+    {
+      "rank": 233,
+      "skill": "Script",
+      "compatibility_score": 0.6049902439117432
+    },
+    {
+      "rank": 234,
+      "skill": "Cloud Platforms",
+      "compatibility_score": 0.6048064827919006
+    },
+    {
+      "rank": 235,
+      "skill": "Active Directory Administration",
+      "compatibility_score": 0.6046345829963684
+    },
+    {
+      "rank": 236,
+      "skill": "Networking Technologies",
+      "compatibility_score": 0.604590654373169
+    },
+    {
+      "rank": 237,
+      "skill": "IT Security",
+      "compatibility_score": 0.6045531630516052
+    },
+    {
+      "rank": 238,
+      "skill": "IT Consulting",
+      "compatibility_score": 0.6045424938201904
+    },
+    {
+      "rank": 239,
+      "skill": "Reporting",
+      "compatibility_score": 0.6045168042182922
+    },
+    {
+      "rank": 240,
+      "skill": "Application Support",
+      "compatibility_score": 0.6045005917549133
+    },
+    {
+      "rank": 241,
+      "skill": "Network Architecture",
+      "compatibility_score": 0.6043881177902222
+    },
+    {
+      "rank": 242,
+      "skill": "Software Deployment",
+      "compatibility_score": 0.6040834784507751
+    },
+    {
+      "rank": 243,
+      "skill": "Security Engineering",
+      "compatibility_score": 0.6040158867835999
+    },
+    {
+      "rank": 244,
+      "skill": "User Account Management",
+      "compatibility_score": 0.6035961508750916
+    },
+    {
+      "rank": 245,
+      "skill": "SCOM",
+      "compatibility_score": 0.603432834148407
+    },
+    {
+      "rank": 246,
+      "skill": "Apache",
+      "compatibility_score": 0.6033995747566223
+    },
+    {
+      "rank": 247,
+      "skill": "Customer Relations",
+      "compatibility_score": 0.6032639741897583
+    },
+    {
+      "rank": 248,
+      "skill": "File Server",
+      "compatibility_score": 0.6027923226356506
+    },
+    {
+      "rank": 249,
+      "skill": "Server Security",
+      "compatibility_score": 0.6026378273963928
+    },
+    {
+      "rank": 250,
+      "skill": "High Availability",
+      "compatibility_score": 0.602620542049408
+    },
+    {
+      "rank": 251,
+      "skill": "Server Optimization",
+      "compatibility_score": 0.6025261282920837
+    },
+    {
+      "rank": 252,
+      "skill": "Access Control",
+      "compatibility_score": 0.6021363735198975
+    },
+    {
+      "rank": 253,
+      "skill": "Remote Access",
+      "compatibility_score": 0.602115273475647
+    },
+    {
+      "rank": 254,
+      "skill": "Storage",
+      "compatibility_score": 0.602100670337677
+    },
+    {
+      "rank": 255,
+      "skill": "Disaster Recovery",
+      "compatibility_score": 0.6020639538764954
+    },
+    {
+      "rank": 256,
+      "skill": "Technical Analysis",
+      "compatibility_score": 0.6020395755767822
+    },
+    {
+      "rank": 257,
+      "skill": "Active Directory Management",
+      "compatibility_score": 0.6020384430885315
+    },
+    {
+      "rank": 258,
+      "skill": "Automation Frameworks",
+      "compatibility_score": 0.601761519908905
+    },
+    {
+      "rank": 259,
+      "skill": "Data Centers",
+      "compatibility_score": 0.6016761660575867
+    },
+    {
+      "rank": 260,
+      "skill": "Security Vulnerability Management",
+      "compatibility_score": 0.6016482710838318
+    },
+    {
+      "rank": 261,
+      "skill": "Networking Concepts",
+      "compatibility_score": 0.6016277074813843
+    },
+    {
+      "rank": 262,
+      "skill": "Web Hosting",
+      "compatibility_score": 0.6016073226928711
+    },
+    {
+      "rank": 263,
+      "skill": "System Deployment",
+      "compatibility_score": 0.6014301776885986
+    },
+    {
+      "rank": 264,
+      "skill": "Software Defined Infrastructure",
+      "compatibility_score": 0.6013661026954651
+    },
+    {
+      "rank": 265,
+      "skill": "Linux Troubleshooting",
+      "compatibility_score": 0.6012046337127686
+    },
+    {
+      "rank": 266,
+      "skill": "Performance Monitoring Tools",
+      "compatibility_score": 0.6011069416999817
+    },
+    {
+      "rank": 267,
+      "skill": "Data Analysis Tools",
+      "compatibility_score": 0.6006192564964294
+    },
+    {
+      "rank": 268,
+      "skill": "Storage Management",
+      "compatibility_score": 0.6004751920700073
+    },
+    {
+      "rank": 269,
+      "skill": "Network Security",
+      "compatibility_score": 0.6002342104911804
+    },
+    {
+      "rank": 270,
+      "skill": "Software Installation and Configuration",
+      "compatibility_score": 0.6000331044197083
+    },
+    {
+      "rank": 271,
+      "skill": "Data Center Operations",
+      "compatibility_score": 0.5999987721443176
+    },
+    {
+      "rank": 272,
+      "skill": "Infrastructure as Code",
+      "compatibility_score": 0.5997803807258606
+    },
+    {
+      "rank": 273,
+      "skill": "Software Installation",
+      "compatibility_score": 0.5994829535484314
+    },
+    {
+      "rank": 274,
+      "skill": "System Integration Testing",
+      "compatibility_score": 0.5993514060974121
+    },
+    {
+      "rank": 275,
+      "skill": "Server Configuration",
+      "compatibility_score": 0.5992563962936401
+    },
+    {
+      "rank": 276,
+      "skill": "System Recovery",
+      "compatibility_score": 0.5991747975349426
+    },
+    {
+      "rank": 277,
+      "skill": "Infrastructure as a Code",
+      "compatibility_score": 0.598991334438324
+    },
+    {
+      "rank": 278,
+      "skill": "Data Center",
+      "compatibility_score": 0.59874027967453
+    },
+    {
+      "rank": 279,
+      "skill": "Business Process",
+      "compatibility_score": 0.5986737012863159
+    },
+    {
+      "rank": 280,
+      "skill": "Service Delivery",
+      "compatibility_score": 0.5985276103019714
+    },
+    {
+      "rank": 281,
+      "skill": "Remote Access Tools",
+      "compatibility_score": 0.5985211730003357
+    },
+    {
+      "rank": 282,
+      "skill": "Technical Problem Solving",
+      "compatibility_score": 0.59842449426651
+    },
+    {
+      "rank": 283,
+      "skill": "Training",
+      "compatibility_score": 0.5980371236801147
+    },
+    {
+      "rank": 284,
+      "skill": "Scripting Languages",
+      "compatibility_score": 0.5976995825767517
+    },
+    {
+      "rank": 285,
+      "skill": "Troubleshooting",
+      "compatibility_score": 0.5975882411003113
+    },
+    {
+      "rank": 286,
+      "skill": "Package Management",
+      "compatibility_score": 0.5975285172462463
+    },
+    {
+      "rank": 287,
+      "skill": "Bash Scripting",
+      "compatibility_score": 0.5974541306495667
+    },
+    {
+      "rank": 288,
+      "skill": "BASH Scripting",
+      "compatibility_score": 0.5974541306495667
+    },
+    {
+      "rank": 289,
+      "skill": "Incident Handling",
+      "compatibility_score": 0.5972722172737122
+    },
+    {
+      "rank": 290,
+      "skill": "Firewall",
+      "compatibility_score": 0.5971671938896179
+    },
+    {
+      "rank": 291,
+      "skill": "Network Automation",
+      "compatibility_score": 0.5971214175224304
+    },
+    {
+      "rank": 292,
+      "skill": "Security Information Management",
+      "compatibility_score": 0.5970742702484131
+    },
+    {
+      "rank": 293,
+      "skill": "Network Monitoring",
+      "compatibility_score": 0.5967685580253601
+    },
+    {
+      "rank": 294,
+      "skill": "Process Improvement",
+      "compatibility_score": 0.5967549681663513
+    },
+    {
+      "rank": 295,
+      "skill": "Continuous Monitoring",
+      "compatibility_score": 0.5967301726341248
+    },
+    {
+      "rank": 296,
+      "skill": "Linux Security",
+      "compatibility_score": 0.5967219471931458
+    },
+    {
+      "rank": 297,
+      "skill": "Data Center Infrastructure",
+      "compatibility_score": 0.596569299697876
+    },
+    {
+      "rank": 298,
+      "skill": "System Recovery Planning",
+      "compatibility_score": 0.59648197889328
+    },
+    {
+      "rank": 299,
+      "skill": "Python Scripting",
+      "compatibility_score": 0.5963864326477051
+    },
+    {
+      "rank": 300,
+      "skill": "Security Incident Handling",
+      "compatibility_score": 0.5963212847709656
+    },
+    {
+      "rank": 301,
+      "skill": "Hardware Support",
+      "compatibility_score": 0.596187174320221
+    },
+    {
+      "rank": 302,
+      "skill": "Email Server",
+      "compatibility_score": 0.5959996581077576
+    },
+    {
+      "rank": 303,
+      "skill": "Docker",
+      "compatibility_score": 0.5959524512290955
+    },
+    {
+      "rank": 304,
+      "skill": "SAN Management",
+      "compatibility_score": 0.5957077145576477
+    },
+    {
+      "rank": 305,
+      "skill": "Network",
+      "compatibility_score": 0.5955066680908203
+    },
+    {
+      "rank": 306,
+      "skill": "System Security Planning",
+      "compatibility_score": 0.5954885482788086
+    },
+    {
+      "rank": 307,
+      "skill": "Email Administration",
+      "compatibility_score": 0.5950559973716736
+    },
+    {
+      "rank": 308,
+      "skill": "Data Modeling",
+      "compatibility_score": 0.5948998928070068
+    },
+    {
+      "rank": 309,
+      "skill": "Testing",
+      "compatibility_score": 0.5948655605316162
+    },
+    {
+      "rank": 310,
+      "skill": "Teamwork",
+      "compatibility_score": 0.5944928526878357
+    },
+    {
+      "rank": 311,
+      "skill": "Capacity Management",
+      "compatibility_score": 0.5943624377250671
+    },
+    {
+      "rank": 312,
+      "skill": "Web Security",
+      "compatibility_score": 0.5943498611450195
+    },
+    {
+      "rank": 313,
+      "skill": "Security Information",
+      "compatibility_score": 0.594275176525116
+    },
+    {
+      "rank": 314,
+      "skill": "System Security Implementation",
+      "compatibility_score": 0.5942589044570923
+    },
+    {
+      "rank": 315,
+      "skill": "Central Processing Unit",
+      "compatibility_score": 0.5940889716148376
+    },
+    {
+      "rank": 316,
+      "skill": "Shell Script",
+      "compatibility_score": 0.5940203070640564
+    },
+    {
+      "rank": 317,
+      "skill": "Cloud Security",
+      "compatibility_score": 0.5940111875534058
+    },
+    {
+      "rank": 318,
+      "skill": "System Deployment Automation",
+      "compatibility_score": 0.5939490795135498
+    },
+    {
+      "rank": 319,
+      "skill": "Command Shell",
+      "compatibility_score": 0.5937610268592834
+    },
+    {
+      "rank": 320,
+      "skill": "Backup",
+      "compatibility_score": 0.5937376022338867
+    },
+    {
+      "rank": 321,
+      "skill": "Network Security Implementation",
+      "compatibility_score": 0.5937246680259705
+    },
+    {
+      "rank": 322,
+      "skill": "Raid",
+      "compatibility_score": 0.593644380569458
+    },
+    {
+      "rank": 323,
+      "skill": "Computer Forensics",
+      "compatibility_score": 0.5936279892921448
+    },
+    {
+      "rank": 324,
+      "skill": "System Security Auditing",
+      "compatibility_score": 0.5933647751808167
+    },
+    {
+      "rank": 325,
+      "skill": "Security Architecture",
+      "compatibility_score": 0.5932176113128662
+    },
+    {
+      "rank": 326,
+      "skill": "Security Assessments",
+      "compatibility_score": 0.592867910861969
+    },
+    {
+      "rank": 327,
+      "skill": "System Installation",
+      "compatibility_score": 0.5928531289100647
+    },
+    {
+      "rank": 328,
+      "skill": "System Architecture Design",
+      "compatibility_score": 0.5927844643592834
+    },
+    {
+      "rank": 329,
+      "skill": "Disaster Planning",
+      "compatibility_score": 0.5926303863525391
+    },
+    {
+      "rank": 330,
+      "skill": "System Imaging",
+      "compatibility_score": 0.5924475789070129
+    },
+    {
+      "rank": 331,
+      "skill": "LVM",
+      "compatibility_score": 0.5920639634132385
+    },
+    {
+      "rank": 332,
+      "skill": "HTTP Servers",
+      "compatibility_score": 0.5918698906898499
+    },
+    {
+      "rank": 333,
+      "skill": "NFS",
+      "compatibility_score": 0.5915822982788086
+    },
+    {
+      "rank": 334,
+      "skill": "RHEL",
+      "compatibility_score": 0.5915138721466064
+    },
+    {
+      "rank": 335,
+      "skill": "Ticketing System",
+      "compatibility_score": 0.591197669506073
+    },
+    {
+      "rank": 336,
+      "skill": "IT Compliance",
+      "compatibility_score": 0.5911952257156372
+    },
+    {
+      "rank": 337,
+      "skill": "Virtual Desktop Infrastructure",
+      "compatibility_score": 0.5911867022514343
+    },
+    {
+      "rank": 338,
+      "skill": "Load Balancing",
+      "compatibility_score": 0.5911673903465271
+    },
+    {
+      "rank": 339,
+      "skill": "Red Hat Configuration",
+      "compatibility_score": 0.5910167098045349
+    },
+    {
+      "rank": 340,
+      "skill": "Kernel",
+      "compatibility_score": 0.5910132527351379
+    },
+    {
+      "rank": 341,
+      "skill": "Linux Shell Scripting",
+      "compatibility_score": 0.5910110473632812
+    },
+    {
+      "rank": 342,
+      "skill": "Problem Solving",
+      "compatibility_score": 0.5909550786018372
+    },
+    {
+      "rank": 343,
+      "skill": "VMware",
+      "compatibility_score": 0.5908792018890381
+    },
+    {
+      "rank": 344,
+      "skill": "Sudoers",
+      "compatibility_score": 0.5906009078025818
+    },
+    {
+      "rank": 345,
+      "skill": "Version Control Tools",
+      "compatibility_score": 0.5905299186706543
+    },
+    {
+      "rank": 346,
+      "skill": "Storage Area Network",
+      "compatibility_score": 0.5903746485710144
+    },
+    {
+      "rank": 347,
+      "skill": "Network Engineering",
+      "compatibility_score": 0.5902838706970215
+    },
+    {
+      "rank": 348,
+      "skill": "Email Server Administration",
+      "compatibility_score": 0.5902438759803772
+    },
+    {
+      "rank": 349,
+      "skill": "Hardware Diagnostics",
+      "compatibility_score": 0.5899885296821594
+    },
+    {
+      "rank": 350,
+      "skill": "High Availability Solutions",
+      "compatibility_score": 0.589747428894043
+    },
+    {
+      "rank": 351,
+      "skill": "Data Structures",
+      "compatibility_score": 0.5896419882774353
+    },
+    {
+      "rank": 352,
+      "skill": "Technical Skills",
+      "compatibility_score": 0.5895989537239075
+    },
+    {
+      "rank": 353,
+      "skill": "PowerShell",
+      "compatibility_score": 0.5894054770469666
+    },
+    {
+      "rank": 354,
+      "skill": "Virtualization Solutions",
+      "compatibility_score": 0.5893620848655701
+    },
+    {
+      "rank": 355,
+      "skill": "System Hardening",
+      "compatibility_score": 0.5892882347106934
+    },
+    {
+      "rank": 356,
+      "skill": "Ticketing Systems",
+      "compatibility_score": 0.5891509652137756
+    },
+    {
+      "rank": 357,
+      "skill": "Technical Support Skills",
+      "compatibility_score": 0.5890373587608337
+    },
+    {
+      "rank": 358,
+      "skill": "Troubleshooting Tools",
+      "compatibility_score": 0.5886856913566589
+    },
+    {
+      "rank": 359,
+      "skill": "TCP/IP Networking",
+      "compatibility_score": 0.5884885787963867
+    },
+    {
+      "rank": 360,
+      "skill": "Technical Troubleshooting",
+      "compatibility_score": 0.5884396433830261
+    },
+    {
+      "rank": 361,
+      "skill": "ITIL Framework",
+      "compatibility_score": 0.5884059071540833
+    },
+    {
+      "rank": 362,
+      "skill": "Change Control",
+      "compatibility_score": 0.5883955359458923
+    },
+    {
+      "rank": 363,
+      "skill": "Data Security",
+      "compatibility_score": 0.5882623195648193
+    },
+    {
+      "rank": 364,
+      "skill": "Security Policies and Procedures",
+      "compatibility_score": 0.5882529020309448
+    },
+    {
+      "rank": 365,
+      "skill": "IT Infrastructure Design",
+      "compatibility_score": 0.5881948471069336
+    },
+    {
+      "rank": 366,
+      "skill": "Database Design",
+      "compatibility_score": 0.5880817770957947
+    },
+    {
+      "rank": 367,
+      "skill": "Security Policies",
+      "compatibility_score": 0.5880472660064697
+    },
+    {
+      "rank": 368,
+      "skill": "Patch Management",
+      "compatibility_score": 0.5877940654754639
+    },
+    {
+      "rank": 369,
+      "skill": "Business Continuity",
+      "compatibility_score": 0.5876064896583557
+    },
+    {
+      "rank": 370,
+      "skill": "System Migration",
+      "compatibility_score": 0.5875015258789062
+    },
+    {
+      "rank": 371,
+      "skill": "System Security Design",
+      "compatibility_score": 0.5874728560447693
+    },
+    {
+      "rank": 372,
+      "skill": "Samba",
+      "compatibility_score": 0.5874584317207336
+    },
+    {
+      "rank": 373,
+      "skill": "Data Visualization",
+      "compatibility_score": 0.5874002575874329
+    },
+    {
+      "rank": 374,
+      "skill": "Active Directory Troubleshooting",
+      "compatibility_score": 0.5873859524726868
+    },
+    {
+      "rank": 375,
+      "skill": "Cloud Computing Concepts",
+      "compatibility_score": 0.5872465372085571
+    },
+    {
+      "rank": 376,
+      "skill": "Remote Support Tools",
+      "compatibility_score": 0.5872002243995667
+    },
+    {
+      "rank": 377,
+      "skill": "Customer Communication",
+      "compatibility_score": 0.5870528817176819
+    },
+    {
+      "rank": 378,
+      "skill": "Business Communication",
+      "compatibility_score": 0.5869741439819336
+    },
+    {
+      "rank": 379,
+      "skill": "Capacity Planning",
+      "compatibility_score": 0.5869322419166565
+    },
+    {
+      "rank": 380,
+      "skill": "Server Hardening",
+      "compatibility_score": 0.5866895318031311
+    },
+    {
+      "rank": 381,
+      "skill": "Log Monitoring and Analysis",
+      "compatibility_score": 0.5865755677223206
+    },
+    {
+      "rank": 382,
+      "skill": "TCP/IP",
+      "compatibility_score": 0.5864998698234558
+    },
+    {
+      "rank": 383,
+      "skill": "ITSM",
+      "compatibility_score": 0.586269736289978
+    },
+    {
+      "rank": 384,
+      "skill": "Cloud Architecture",
+      "compatibility_score": 0.5861312747001648
+    },
+    {
+      "rank": 385,
+      "skill": "IT Strategy",
+      "compatibility_score": 0.586114227771759
+    },
+    {
+      "rank": 386,
+      "skill": "Problem Analysis",
+      "compatibility_score": 0.5859033465385437
+    },
+    {
+      "rank": 387,
+      "skill": "Data Analysis Skills",
+      "compatibility_score": 0.5858352780342102
+    },
+    {
+      "rank": 388,
+      "skill": "Active Directory",
+      "compatibility_score": 0.5857324004173279
+    },
+    {
+      "rank": 389,
+      "skill": "Disaster Response",
+      "compatibility_score": 0.5857313275337219
+    },
+    {
+      "rank": 390,
+      "skill": "Continuous Improvement",
+      "compatibility_score": 0.5854434967041016
+    },
+    {
+      "rank": 391,
+      "skill": "Technical Writing",
+      "compatibility_score": 0.5853187441825867
+    },
+    {
+      "rank": 392,
+      "skill": "PERL",
+      "compatibility_score": 0.5852490067481995
+    },
+    {
+      "rank": 393,
+      "skill": "Perl",
+      "compatibility_score": 0.5852490067481995
+    },
+    {
+      "rank": 394,
+      "skill": "Red Hat",
+      "compatibility_score": 0.5850124359130859
+    },
+    {
+      "rank": 395,
+      "skill": "Agile Methodologies",
+      "compatibility_score": 0.5849910378456116
+    },
+    {
+      "rank": 396,
+      "skill": "Virtualization Administration",
+      "compatibility_score": 0.5849366784095764
+    },
+    {
+      "rank": 397,
+      "skill": "LAMP",
+      "compatibility_score": 0.5848104357719421
+    },
+    {
+      "rank": 398,
+      "skill": "DNS",
+      "compatibility_score": 0.5843403339385986
+    },
+    {
+      "rank": 399,
+      "skill": "Customer Satisfaction",
+      "compatibility_score": 0.5842865109443665
+    },
+    {
+      "rank": 400,
+      "skill": "Linux Command Line",
+      "compatibility_score": 0.5842468738555908
+    },
+    {
+      "rank": 401,
+      "skill": "Hardware Diagnosis",
+      "compatibility_score": 0.5838255882263184
+    },
+    {
+      "rank": 402,
+      "skill": "TCP",
+      "compatibility_score": 0.5837627053260803
+    },
+    {
+      "rank": 403,
+      "skill": "Domain Name System",
+      "compatibility_score": 0.583418607711792
+    },
+    {
+      "rank": 404,
+      "skill": "Data Storage",
+      "compatibility_score": 0.5833806991577148
+    },
+    {
+      "rank": 405,
+      "skill": "Server Performance Tuning",
+      "compatibility_score": 0.583297073841095
+    },
+    {
+      "rank": 406,
+      "skill": "Backup Solutions",
+      "compatibility_score": 0.5830911993980408
+    },
+    {
+      "rank": 407,
+      "skill": "Power User",
+      "compatibility_score": 0.5829939246177673
+    },
+    {
+      "rank": 408,
+      "skill": "Customer Service Skills",
+      "compatibility_score": 0.5829359889030457
+    },
+    {
+      "rank": 409,
+      "skill": "Technical Documentation Skills",
+      "compatibility_score": 0.5828068852424622
+    },
+    {
+      "rank": 410,
+      "skill": "User Permissions",
+      "compatibility_score": 0.5827138423919678
+    },
+    {
+      "rank": 411,
+      "skill": "Virtualization Technologies",
+      "compatibility_score": 0.5826607346534729
+    },
+    {
+      "rank": 412,
+      "skill": "Data Transfer",
+      "compatibility_score": 0.5826365947723389
+    },
+    {
+      "rank": 413,
+      "skill": "Configuration Files",
+      "compatibility_score": 0.5826283693313599
+    },
+    {
+      "rank": 414,
+      "skill": "Ansible Automation",
+      "compatibility_score": 0.5824742913246155
+    },
+    {
+      "rank": 415,
+      "skill": "Security Information and Event Management",
+      "compatibility_score": 0.5822804570198059
+    },
+    {
+      "rank": 416,
+      "skill": "VPN",
+      "compatibility_score": 0.5822112560272217
+    },
+    {
+      "rank": 417,
+      "skill": "IT Infrastructure Architecture",
+      "compatibility_score": 0.5820934772491455
+    },
+    {
+      "rank": 418,
+      "skill": "Performance Optimization Tools",
+      "compatibility_score": 0.5815829038619995
+    },
+    {
+      "rank": 419,
+      "skill": "Application Security",
+      "compatibility_score": 0.581563413143158
+    },
+    {
+      "rank": 420,
+      "skill": "Continuous Integration/Continuous Delivery",
+      "compatibility_score": 0.5811975598335266
+    },
+    {
+      "rank": 421,
+      "skill": "Performance Optimization",
+      "compatibility_score": 0.5811579823493958
+    },
+    {
+      "rank": 422,
+      "skill": "Containers",
+      "compatibility_score": 0.5810280442237854
+    },
+    {
+      "rank": 423,
+      "skill": "Storage Solutions",
+      "compatibility_score": 0.5807269215583801
+    },
+    {
+      "rank": 424,
+      "skill": "Technical Analysis Skills",
+      "compatibility_score": 0.5806059837341309
+    },
+    {
+      "rank": 425,
+      "skill": "Networking Skills",
+      "compatibility_score": 0.5802910327911377
+    },
+    {
+      "rank": 426,
+      "skill": "Risk Management",
+      "compatibility_score": 0.5801600813865662
+    },
+    {
+      "rank": 427,
+      "skill": "Bash Shell Scripting",
+      "compatibility_score": 0.580137312412262
+    },
+    {
+      "rank": 428,
+      "skill": "Installation",
+      "compatibility_score": 0.5801329016685486
+    },
+    {
+      "rank": 429,
+      "skill": "User Permissions Management",
+      "compatibility_score": 0.5799709558486938
+    },
+    {
+      "rank": 430,
+      "skill": "Ant",
+      "compatibility_score": 0.5798959136009216
+    },
+    {
+      "rank": 431,
+      "skill": "Security Awareness",
+      "compatibility_score": 0.5798935890197754
+    },
+    {
+      "rank": 432,
+      "skill": "Linux Containers",
+      "compatibility_score": 0.5796306729316711
+    },
+    {
+      "rank": 433,
+      "skill": "Sudo",
+      "compatibility_score": 0.579577624797821
+    },
+    {
+      "rank": 434,
+      "skill": "Virtualization",
+      "compatibility_score": 0.5792021155357361
+    },
+    {
+      "rank": 435,
+      "skill": "Endpoint Security",
+      "compatibility_score": 0.5790702700614929
+    },
+    {
+      "rank": 436,
+      "skill": "Business Skills",
+      "compatibility_score": 0.5785552859306335
+    },
+    {
+      "rank": 437,
+      "skill": "VLAN",
+      "compatibility_score": 0.578525722026825
+    },
+    {
+      "rank": 438,
+      "skill": "Log Analysis",
+      "compatibility_score": 0.5784363150596619
+    },
+    {
+      "rank": 439,
+      "skill": "System Security Hardening",
+      "compatibility_score": 0.5781580805778503
+    },
+    {
+      "rank": 440,
+      "skill": "Network Architecture Design",
+      "compatibility_score": 0.5781102776527405
+    },
+    {
+      "rank": 441,
+      "skill": "Continuous Delivery",
+      "compatibility_score": 0.5779431462287903
+    },
+    {
+      "rank": 442,
+      "skill": "Network Design and Implementation",
+      "compatibility_score": 0.5777456164360046
+    },
+    {
+      "rank": 443,
+      "skill": "LAMP Stack",
+      "compatibility_score": 0.5772150754928589
+    },
+    {
+      "rank": 444,
+      "skill": "Security Hardening",
+      "compatibility_score": 0.5771923065185547
+    },
+    {
+      "rank": 445,
+      "skill": "ServiceNow",
+      "compatibility_score": 0.5770958065986633
+    },
+    {
+      "rank": 446,
+      "skill": "Security Audits",
+      "compatibility_score": 0.57676762342453
+    },
+    {
+      "rank": 447,
+      "skill": "Patching",
+      "compatibility_score": 0.5766666531562805
+    },
+    {
+      "rank": 448,
+      "skill": "System Backup",
+      "compatibility_score": 0.5765741467475891
+    },
+    {
+      "rank": 449,
+      "skill": "Network Communication",
+      "compatibility_score": 0.5764057040214539
+    },
+    {
+      "rank": 450,
+      "skill": "Networking Protocols",
+      "compatibility_score": 0.5763759613037109
+    },
+    {
+      "rank": 451,
+      "skill": "Red Hat Certified System Administrator (RHCSA)",
+      "compatibility_score": 0.576206624507904
+    },
+    {
+      "rank": 452,
+      "skill": "Communication",
+      "compatibility_score": 0.5760695934295654
+    },
+    {
+      "rank": 453,
+      "skill": "Remote Support",
+      "compatibility_score": 0.5759303569793701
+    },
+    {
+      "rank": 454,
+      "skill": "Continuous Integration and Continuous Delivery",
+      "compatibility_score": 0.5758488178253174
+    },
+    {
+      "rank": 455,
+      "skill": "DNS Management",
+      "compatibility_score": 0.5758353471755981
+    },
+    {
+      "rank": 456,
+      "skill": "Continuous Deployment",
+      "compatibility_score": 0.5757982134819031
+    },
+    {
+      "rank": 457,
+      "skill": "ITIL",
+      "compatibility_score": 0.575657308101654
+    },
+    {
+      "rank": 458,
+      "skill": "Server Deployment",
+      "compatibility_score": 0.5754454731941223
+    },
+    {
+      "rank": 459,
+      "skill": "Incident Response Planning",
+      "compatibility_score": 0.5754428505897522
+    },
+    {
+      "rank": 460,
+      "skill": "API Integration",
+      "compatibility_score": 0.5753927230834961
+    },
+    {
+      "rank": 461,
+      "skill": "Operating System Deployment",
+      "compatibility_score": 0.5752774477005005
+    },
+    {
+      "rank": 462,
+      "skill": "Software Defined Networking",
+      "compatibility_score": 0.5752716064453125
+    },
+    {
+      "rank": 463,
+      "skill": "Business Continuity Planning",
+      "compatibility_score": 0.5748680233955383
+    },
+    {
+      "rank": 464,
+      "skill": "HTTP",
+      "compatibility_score": 0.5748489499092102
+    },
+    {
+      "rank": 465,
+      "skill": "Virtualization Management",
+      "compatibility_score": 0.5747653245925903
+    },
+    {
+      "rank": 466,
+      "skill": "Security Compliance",
+      "compatibility_score": 0.5745187401771545
+    },
+    {
+      "rank": 467,
+      "skill": "Identity Management",
+      "compatibility_score": 0.5744596123695374
+    },
+    {
+      "rank": 468,
+      "skill": "Power",
+      "compatibility_score": 0.5744421482086182
+    },
+    {
+      "rank": 469,
+      "skill": "Root Cause Analysis",
+      "compatibility_score": 0.5742160677909851
+    },
+    {
+      "rank": 470,
+      "skill": "OpenStack",
+      "compatibility_score": 0.5739484429359436
+    },
+    {
+      "rank": 471,
+      "skill": "Database Security",
+      "compatibility_score": 0.5737864375114441
+    },
+    {
+      "rank": 472,
+      "skill": "Security Patching",
+      "compatibility_score": 0.5736784338951111
+    },
+    {
+      "rank": 473,
+      "skill": "Package Updates",
+      "compatibility_score": 0.5736402869224548
+    },
+    {
+      "rank": 474,
+      "skill": "SNMP",
+      "compatibility_score": 0.5736157298088074
+    },
+    {
+      "rank": 475,
+      "skill": "System Restore",
+      "compatibility_score": 0.5735554099082947
+    },
+    {
+      "rank": 476,
+      "skill": "Virtual Network",
+      "compatibility_score": 0.5732799172401428
+    },
+    {
+      "rank": 477,
+      "skill": "Hardware Configuration",
+      "compatibility_score": 0.573232114315033
+    },
+    {
+      "rank": 478,
+      "skill": "Performance Tuning",
+      "compatibility_score": 0.572664201259613
+    },
+    {
+      "rank": 479,
+      "skill": "LDAP",
+      "compatibility_score": 0.5725358724594116
+    },
+    {
+      "rank": 480,
+      "skill": "Storage Technologies",
+      "compatibility_score": 0.5724876523017883
+    },
+    {
+      "rank": 481,
+      "skill": "Help Desk Support",
+      "compatibility_score": 0.5724870562553406
+    },
+    {
+      "rank": 482,
+      "skill": "Data Governance",
+      "compatibility_score": 0.5722741484642029
+    },
+    {
+      "rank": 483,
+      "skill": "Application Configuration",
+      "compatibility_score": 0.5720813274383545
+    },
+    {
+      "rank": 484,
+      "skill": "File Transfer",
+      "compatibility_score": 0.5720775127410889
+    },
+    {
+      "rank": 485,
+      "skill": "Continuous Integration",
+      "compatibility_score": 0.5712730288505554
+    },
+    {
+      "rank": 486,
+      "skill": "Disaster Avoidance",
+      "compatibility_score": 0.5712500214576721
+    },
+    {
+      "rank": 487,
+      "skill": "Network Design",
+      "compatibility_score": 0.5712123513221741
+    },
+    {
+      "rank": 488,
+      "skill": "Server Installation",
+      "compatibility_score": 0.5708044171333313
+    },
+    {
+      "rank": 489,
+      "skill": "Security Best Practices",
+      "compatibility_score": 0.5705873966217041
+    },
+    {
+      "rank": 490,
+      "skill": "Server Virtualization",
+      "compatibility_score": 0.5702843070030212
+    },
+    {
+      "rank": 491,
+      "skill": "Security Patch Management",
+      "compatibility_score": 0.570092499256134
+    },
+    {
+      "rank": 492,
+      "skill": "Network Security Design",
+      "compatibility_score": 0.5699847936630249
+    },
+    {
+      "rank": 493,
+      "skill": "RPM",
+      "compatibility_score": 0.5698619484901428
+    },
+    {
+      "rank": 494,
+      "skill": "Active Directory Federation Services",
+      "compatibility_score": 0.5697357058525085
+    },
+    {
+      "rank": 495,
+      "skill": "Network Configuration",
+      "compatibility_score": 0.5696650147438049
+    },
+    {
+      "rank": 496,
+      "skill": "VPNs",
+      "compatibility_score": 0.5695607662200928
+    },
+    {
+      "rank": 497,
+      "skill": "Continuous Testing",
+      "compatibility_score": 0.569374144077301
+    },
+    {
+      "rank": 498,
+      "skill": "High Availability Clustering",
+      "compatibility_score": 0.569166898727417
+    },
+    {
+      "rank": 499,
+      "skill": "Hardware Repair",
+      "compatibility_score": 0.5689864158630371
+    },
+    {
+      "rank": 500,
+      "skill": "Web Application Security",
+      "compatibility_score": 0.5689097046852112
+    },
+    {
+      "rank": 501,
+      "skill": "Disaster Recovery Planning",
+      "compatibility_score": 0.5688931941986084
+    },
+    {
+      "rank": 502,
+      "skill": "PowerCLI",
+      "compatibility_score": 0.5684070587158203
+    },
+    {
+      "rank": 503,
+      "skill": "Logical Thinking",
+      "compatibility_score": 0.5681977868080139
+    },
+    {
+      "rank": 504,
+      "skill": "Data Center Security",
+      "compatibility_score": 0.5681889057159424
+    },
+    {
+      "rank": 505,
+      "skill": "Kernel Debugging",
+      "compatibility_score": 0.5677573084831238
+    },
+    {
+      "rank": 506,
+      "skill": "Logical Volume Management",
+      "compatibility_score": 0.5672807693481445
+    },
+    {
+      "rank": 507,
+      "skill": "Operating System Upgrades",
+      "compatibility_score": 0.5672041177749634
+    },
+    {
+      "rank": 508,
+      "skill": "Access Control Lists",
+      "compatibility_score": 0.5670769810676575
+    },
+    {
+      "rank": 509,
+      "skill": "PERL Scripting",
+      "compatibility_score": 0.5670529007911682
+    },
+    {
+      "rank": 510,
+      "skill": "Operating Systems Installation",
+      "compatibility_score": 0.5667253136634827
+    },
+    {
+      "rank": 511,
+      "skill": "Remote Desktop",
+      "compatibility_score": 0.5665212273597717
+    },
+    {
+      "rank": 512,
+      "skill": "Network Devices",
+      "compatibility_score": 0.5661267638206482
+    },
+    {
+      "rank": 513,
+      "skill": "FTP Server",
+      "compatibility_score": 0.565829873085022
+    },
+    {
+      "rank": 514,
+      "skill": "DNS Server",
+      "compatibility_score": 0.5656466484069824
+    },
+    {
+      "rank": 515,
+      "skill": "Red Hat Certified Engineer (RHCE)",
+      "compatibility_score": 0.5656054615974426
+    },
+    {
+      "rank": 516,
+      "skill": "IT",
+      "compatibility_score": 0.5653246641159058
+    },
+    {
+      "rank": 517,
+      "skill": "Root Cause",
+      "compatibility_score": 0.5650455355644226
+    },
+    {
+      "rank": 518,
+      "skill": "Hardware Installation and Configuration",
+      "compatibility_score": 0.564981997013092
+    },
+    {
+      "rank": 519,
+      "skill": "PowerShell Scripting",
+      "compatibility_score": 0.5648943781852722
+    },
+    {
+      "rank": 520,
+      "skill": "Data Replication",
+      "compatibility_score": 0.5648735761642456
+    },
+    {
+      "rank": 521,
+      "skill": "Network Protocols",
+      "compatibility_score": 0.5641182065010071
+    },
+    {
+      "rank": 522,
+      "skill": "IT Security Best Practices",
+      "compatibility_score": 0.5640754103660583
+    },
+    {
+      "rank": 523,
+      "skill": "Identity and Access Management",
+      "compatibility_score": 0.5640714764595032
+    },
+    {
+      "rank": 524,
+      "skill": "Security Awareness Training",
+      "compatibility_score": 0.5640460848808289
+    },
+    {
+      "rank": 525,
+      "skill": "Load Balancers",
+      "compatibility_score": 0.5640133023262024
+    },
+    {
+      "rank": 526,
+      "skill": "Web Server Configuration",
+      "compatibility_score": 0.5637680888175964
+    },
+    {
+      "rank": 527,
+      "skill": "Service Level Agreements",
+      "compatibility_score": 0.5637664794921875
+    },
+    {
+      "rank": 528,
+      "skill": "Application Deployment",
+      "compatibility_score": 0.5634617805480957
+    },
+    {
+      "rank": 529,
+      "skill": "Server Migration",
+      "compatibility_score": 0.5634384751319885
+    },
+    {
+      "rank": 530,
+      "skill": "REST APIs",
+      "compatibility_score": 0.563366174697876
+    },
+    {
+      "rank": 531,
+      "skill": "Operating System Installation",
+      "compatibility_score": 0.5631557106971741
+    },
+    {
+      "rank": 532,
+      "skill": "Security Incident Response",
+      "compatibility_score": 0.5629495978355408
+    },
+    {
+      "rank": 533,
+      "skill": "Data Backup",
+      "compatibility_score": 0.5629410147666931
+    },
+    {
+      "rank": 534,
+      "skill": "OpenShift",
+      "compatibility_score": 0.5627837777137756
+    },
+    {
+      "rank": 535,
+      "skill": "Data Recovery",
+      "compatibility_score": 0.5623747706413269
+    },
+    {
+      "rank": 536,
+      "skill": "SSL",
+      "compatibility_score": 0.5623123645782471
+    },
+    {
+      "rank": 537,
+      "skill": "Data Integrity",
+      "compatibility_score": 0.5623013973236084
+    },
+    {
+      "rank": 538,
+      "skill": "Problem Isolation",
+      "compatibility_score": 0.5619285106658936
+    },
+    {
+      "rank": 539,
+      "skill": "Data Migration",
+      "compatibility_score": 0.5617226958274841
+    },
+    {
+      "rank": 540,
+      "skill": "Kernel Configuration",
+      "compatibility_score": 0.5616173148155212
+    },
+    {
+      "rank": 541,
+      "skill": "IT Support",
+      "compatibility_score": 0.5614588260650635
+    },
+    {
+      "rank": 542,
+      "skill": "Package Installation",
+      "compatibility_score": 0.5613477230072021
+    },
+    {
+      "rank": 543,
+      "skill": "Security Information and Event Management (SIEM)",
+      "compatibility_score": 0.5611105561256409
+    },
+    {
+      "rank": 544,
+      "skill": "Disaster Mitigation",
+      "compatibility_score": 0.560549795627594
+    },
+    {
+      "rank": 545,
+      "skill": "Virtual Desktop",
+      "compatibility_score": 0.5604400038719177
+    },
+    {
+      "rank": 546,
+      "skill": "REST",
+      "compatibility_score": 0.5602023601531982
+    },
+    {
+      "rank": 547,
+      "skill": "Containerization",
+      "compatibility_score": 0.5601505637168884
+    },
+    {
+      "rank": 548,
+      "skill": "Troubleshooting Hardware",
+      "compatibility_score": 0.5601444244384766
+    },
+    {
+      "rank": 549,
+      "skill": "Zabbix",
+      "compatibility_score": 0.5599480271339417
+    },
+    {
+      "rank": 550,
+      "skill": "Logical Volume Manager",
+      "compatibility_score": 0.5597808361053467
+    },
+    {
+      "rank": 551,
+      "skill": "Disaster Prevention",
+      "compatibility_score": 0.5593224167823792
+    },
+    {
+      "rank": 552,
+      "skill": "File Permissions",
+      "compatibility_score": 0.5588330030441284
+    },
+    {
+      "rank": 553,
+      "skill": "LDAP Administration",
+      "compatibility_score": 0.5586045384407043
+    },
+    {
+      "rank": 554,
+      "skill": "Network Security Protocols",
+      "compatibility_score": 0.5582355260848999
+    },
+    {
+      "rank": 555,
+      "skill": "Backup and Recovery",
+      "compatibility_score": 0.5581347346305847
+    },
+    {
+      "rank": 556,
+      "skill": "Container Orchestration",
+      "compatibility_score": 0.5579376220703125
+    },
+    {
+      "rank": 557,
+      "skill": "Incident Response",
+      "compatibility_score": 0.5575636029243469
+    },
+    {
+      "rank": 558,
+      "skill": "Ansible Configuration",
+      "compatibility_score": 0.5574528574943542
+    },
+    {
+      "rank": 559,
+      "skill": "Email Security",
+      "compatibility_score": 0.5571954846382141
+    },
+    {
+      "rank": 560,
+      "skill": "Backup Strategies",
+      "compatibility_score": 0.5571914315223694
+    },
+    {
+      "rank": 561,
+      "skill": "Active Directory Security",
+      "compatibility_score": 0.5567981600761414
+    },
+    {
+      "rank": 562,
+      "skill": "SAN Storage",
+      "compatibility_score": 0.5560548901557922
+    },
+    {
+      "rank": 563,
+      "skill": "SELinux",
+      "compatibility_score": 0.5558146238327026
+    },
+    {
+      "rank": 564,
+      "skill": "SAN",
+      "compatibility_score": 0.5552428364753723
+    },
+    {
+      "rank": 565,
+      "skill": "Hardware Troubleshooting",
+      "compatibility_score": 0.5550730228424072
+    },
+    {
+      "rank": 566,
+      "skill": "Hardware Installation",
+      "compatibility_score": 0.5542540550231934
+    },
+    {
+      "rank": 567,
+      "skill": "Application Installation",
+      "compatibility_score": 0.5542413592338562
+    },
+    {
+      "rank": 568,
+      "skill": "User Account Creation",
+      "compatibility_score": 0.5541445016860962
+    },
+    {
+      "rank": 569,
+      "skill": "Network Troubleshooting",
+      "compatibility_score": 0.5537561774253845
+    },
+    {
+      "rank": 570,
+      "skill": "Data Recovery Planning",
+      "compatibility_score": 0.5536693334579468
+    },
+    {
+      "rank": 571,
+      "skill": "RESTful APIs",
+      "compatibility_score": 0.5535773038864136
+    },
+    {
+      "rank": 572,
+      "skill": "DHCP Server",
+      "compatibility_score": 0.5529977679252625
+    },
+    {
+      "rank": 573,
+      "skill": "Kernel Debug",
+      "compatibility_score": 0.5517460703849792
+    },
+    {
+      "rank": 574,
+      "skill": "Data Loss Prevention",
+      "compatibility_score": 0.5507608652114868
+    },
+    {
+      "rank": 575,
+      "skill": "Firewall Configuration",
+      "compatibility_score": 0.5506877303123474
+    },
+    {
+      "rank": 576,
+      "skill": "LDAP Server",
+      "compatibility_score": 0.550540030002594
+    },
+    {
+      "rank": 577,
+      "skill": "File Transfer Protocol",
+      "compatibility_score": 0.5504390597343445
+    },
+    {
+      "rank": 578,
+      "skill": "DHCP",
+      "compatibility_score": 0.5503746867179871
+    },
+    {
+      "rank": 579,
+      "skill": "Critical Thinking",
+      "compatibility_score": 0.5499822497367859
+    },
+    {
+      "rank": 580,
+      "skill": "System Backup and Recovery",
+      "compatibility_score": 0.5479204058647156
+    },
+    {
+      "rank": 581,
+      "skill": "SNMP Monitoring",
+      "compatibility_score": 0.5476488471031189
+    },
+    {
+      "rank": 582,
+      "skill": "Email Configuration",
+      "compatibility_score": 0.5451465249061584
+    },
+    {
+      "rank": 583,
+      "skill": "PowerShell Script",
+      "compatibility_score": 0.5446901321411133
+    },
+    {
+      "rank": 584,
+      "skill": "Disk Partitioning",
+      "compatibility_score": 0.5446583032608032
+    },
+    {
+      "rank": 585,
+      "skill": "Remote Troubleshooting",
+      "compatibility_score": 0.5439536571502686
+    },
+    {
+      "rank": 586,
+      "skill": "Troubleshooting Network Issues",
+      "compatibility_score": 0.5427717566490173
+    },
+    {
+      "rank": 587,
+      "skill": "Data Backup and Recovery",
+      "compatibility_score": 0.5411577224731445
+    },
+    {
+      "rank": 588,
+      "skill": "Storage Arrays",
+      "compatibility_score": 0.5408862233161926
+    },
+    {
+      "rank": 589,
+      "skill": "Identity Solutions",
+      "compatibility_score": 0.5403397679328918
+    },
+    {
+      "rank": 590,
+      "skill": "VPN Setup",
+      "compatibility_score": 0.5399232506752014
+    },
+    {
+      "rank": 591,
+      "skill": "TCP IP",
+      "compatibility_score": 0.5395124554634094
+    },
+    {
+      "rank": 592,
+      "skill": "Apache Tomcat",
+      "compatibility_score": 0.5380330681800842
+    },
+    {
+      "rank": 593,
+      "skill": "SSL/TLS",
+      "compatibility_score": 0.5362188220024109
+    },
+    {
+      "rank": 594,
+      "skill": "RPM Packaging",
+      "compatibility_score": 0.5356216430664062
+    },
+    {
+      "rank": 595,
+      "skill": "Disk Cloning",
+      "compatibility_score": 0.5337478518486023
+    },
+    {
+      "rank": 596,
+      "skill": "VPN Configuration",
+      "compatibility_score": 0.5308411121368408
+    },
+    {
+      "rank": 597,
+      "skill": "VPN Installation",
+      "compatibility_score": 0.5141866207122803
+    },
+    {
+      "rank": 598,
+      "skill": "LDAP Configuration",
+      "compatibility_score": 0.514082133769989
+    },
+    {
+      "rank": 599,
+      "skill": "SSL Certificates",
+      "compatibility_score": 0.5129609107971191
+    }
+  ]
+}

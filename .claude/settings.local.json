@@ -4,7 +4,21 @@
       "WebSearch",
       "WebFetch(domain:openrouter.ai)",
       "Bash(pip install:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(for dir in */)",
+      "Bash(do echo \"$dir%/:\")",
+      "Bash(ls:*)",
+      "Bash(du:*)",
+      "Bash(awk:*)",
+      "Bash(done)",
+      "Bash(while read dir)",
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(for dir in gene_ontology chebi cell_ontology mesh esco)",
+      "Bash(do echo \"=== $dir ===\")",
+      "Bash(gunzip:*)"
     ],
     "deny": [],
     "ask": []
