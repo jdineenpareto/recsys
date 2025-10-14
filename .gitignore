@@ -11,3 +11,11 @@ wheels/
 
 # Embedding cache
 .embedding_cache/
+
+# Ontology data files (large, should be downloaded locally)
+ontologies/gene_ontology/
+ontologies/chebi/
+ontologies/cell_ontology/
+ontologies/mesh/
+ontologies/esco/
+ontologies/snomed/
