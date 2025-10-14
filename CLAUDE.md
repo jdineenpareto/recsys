@@ -72,6 +72,10 @@ uv sync
 python extract.py
 # Output: extracted_skills.json
 
+# Step 1 (Advanced): Extract with verification gate to filter inferred skills
+python extract.py --verify-evidence
+# Uses extract_filters.json to check if skills have direct evidence in resume
+
 # Step 2 (Optional): Rank skills by evidence
 python sort.py
 # Output: sorted_skills.json
@@ -154,11 +158,58 @@ The skill extractor uses a counter-based masking strategy:
 **Why this matters:** Don't simplify the masking logic - it prevents the LLM from just confirming existing skills without searching the resume.
 
 **Implementation details:**
-- Lines 45-58: `mask_random_skills()` randomly removes N skills from the list
-- Line 68: Skills are masked before each prompt using current counter value
-- Lines 86-95: Counter decrements when "NONE" returned, increments on success
-- Lines 97-106: Counter decrements when skill already exists (duplicate detection)
-- Lines 64-66: Halts after `zero_counter_streak >= 10` consecutive failures
+- Lines 62-75: `mask_random_skills()` randomly removes N skills from the list
+- Line 175: Skills are masked before each prompt using current counter value
+- Lines 203-212: Counter decrements when "NONE" returned, increments on success
+- Lines 214-223: Counter decrements when skill already exists (duplicate detection)
+- Lines 171-173: Halts after `zero_counter_streak >= 10` consecutive failures
+
+#### 1.5. Post-Extraction Filter System (NEW)
+
+**Purpose:** Optional verification gate to filter out inferred skills that lack direct evidence in the resume.
+
+**Design Philosophy:** Extract as many skills as possible first, THEN filter. Filtering never happens during extraction to maximize skill discovery.
+
+**Configuration:** Uses [extract_filters.json](d:\dev\escoSkill2\extract_filters.json) with customizable filters.
+
+**Filter Structure:**
+```json
+{
+  "filters": [{
+    "name": "direct_evidence_check",
+    "enabled": true,
+    "system_prompt": "{resume_text}",
+    "user_prompt_template": "Does the resume contain DIRECT evidence for \"{skill}\"?",
+    "temperature": 0.1,
+    "max_tokens": 100,
+    "pass_condition": "YES"
+  }],
+  "model": "google/gemini-flash-1.5",
+  "cache_results": true
+}
+```
+
+**How It Works:**
+1. Extract ALL skills without any filtering (maximize discovery)
+2. After extraction completes, run filters on the complete skill list
+3. Return only skills that pass all enabled filters
+
+**Implementation details:**
+- Lines 21-31: `_load_filters_config()` - Loads JSON configuration with error handling
+- Lines 77-154: `verify_skill_directly_supported()` - Applies all enabled filters sequentially
+- Lines 86-88: Cache check (if enabled)
+- Lines 90-95: Filter execution with custom prompts
+- Lines 101-149: Per-filter API requests with configurable temperature/tokens
+- Lines 245-266: Post-extraction filtering (always and only post-extraction)
+
+**Usage:**
+```bash
+# Enable post-extraction verification
+python extract.py --verify-evidence
+
+# Use custom filter configuration
+python extract.py --verify-evidence --filters-config my_filters.json
+```
 
 #### 2. TrueSkill with Quadruple Verification in sort.py
 For each skill comparison, asks 4 logically-related questions:

@@ -5,7 +5,8 @@ import os
 from typing import List, Dict, Any
 
 class SkillExtractor:
-    def __init__(self, api_key: str, use_verification_gate: bool = False, model: str = "google/gemini-flash-1.5"):
+    def __init__(self, api_key: str, use_verification_gate: bool = False, model: str = "google/gemini-2.5-flash-lite",
+                 filters_config_path: str = "extract_filters.json"):
         self.api_key = api_key
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
         self.model = model
@@ -14,6 +15,20 @@ class SkillExtractor:
         self.zero_counter_streak = 0
         self.use_verification_gate = use_verification_gate
         self.resume_text = ""
+        self.filters_config = self._load_filters_config(filters_config_path)
+        self.verification_cache = {}
+
+    def _load_filters_config(self, config_path: str) -> Dict[str, Any]:
+        """Load filters configuration from JSON file."""
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(f"[WARN] Filters config '{config_path}' not found. Using default verification behavior.")
+            return {"filters": [], "model": "google/gemini-2.5-flash-lite", "cache_results": False}
+        except json.JSONDecodeError as e:
+            print(f"[ERROR] Failed to parse filters config: {e}. Using default verification behavior.")
+            return {"filters": [], "model": "google/gemini-2.5-flash-lite", "cache_results": False}
 
     def load_resume(self, file_path: str) -> str:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -63,40 +78,80 @@ class SkillExtractor:
         """
         Verification gate: Check if skill is directly supported by resume evidence.
         Returns True if directly supported, False if only inferred.
+        Uses filters configuration from extract_filters.json.
         """
         if not self.use_verification_gate:
             return True
 
-        verification_prompt = f"""Does the resume contain DIRECT evidence that the candidate has the skill "{skill}"?
+        # Check cache if enabled
+        if self.filters_config.get("cache_results", False) and skill in self.verification_cache:
+            return self.verification_cache[skill]
 
-Direct evidence means:
-- Explicit mention of the skill/technology/tool by name
-- Clear description of using or working with this specific skill
-- Projects, tasks, or responsibilities that explicitly involve this skill
+        # Get enabled filters
+        enabled_filters = [f for f in self.filters_config.get("filters", []) if f.get("enabled", False)]
 
-NOT direct evidence:
-- Skills that could be inferred but aren't explicitly mentioned
-- General statements that might imply the skill
-- Related skills that aren't the same thing
-
-Respond with ONLY "YES" if there is direct evidence, or "NO" if the skill is only inferred."""
-
-        try:
-            response = self.make_api_request(self.resume_text, verification_prompt)
-            content = response['choices'][0]['message']['content'].strip().upper()
-
-            is_supported = "YES" in content
-
-            if not is_supported:
-                print(f"  [REJECTED] Skill '{skill}' - only inferred, not directly supported")
-            else:
-                print(f"  [VERIFIED] Skill '{skill}' - directly supported by resume")
-
-            return is_supported
-
-        except Exception as e:
-            print(f"  [ERROR] Verification failed for '{skill}': {e}. Defaulting to accept.")
+        if not enabled_filters:
+            print(f"  [WARN] No enabled filters found. Accepting skill by default.")
             return True
+
+        # Use model from config or fallback to instance model
+        model = self.filters_config.get("model", self.model)
+
+        # Apply each filter
+        for filter_config in enabled_filters:
+            filter_name = filter_config.get("name", "unnamed_filter")
+
+            # Build system prompt (replace resume_text placeholder)
+            system_prompt = filter_config.get("system_prompt", "").replace("{resume_text}", self.resume_text)
+
+            # Build user prompt from template
+            user_prompt_template = filter_config.get("user_prompt_template", "")
+            user_prompt = user_prompt_template.replace("{skill}", skill)
+
+            try:
+                # Create custom API request with filter-specific model
+                headers = {
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://github.com/yourusername/yourrepo",
+                    "X-Title": "Skill Extractor"
+                }
+
+                data = {
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": filter_config.get("temperature", 0.1),
+                    "max_tokens": filter_config.get("max_tokens", 100)
+                }
+
+                response = requests.post(self.base_url, headers=headers, json=data)
+                response.raise_for_status()
+                result = response.json()
+
+                content = result['choices'][0]['message']['content'].strip().upper()
+                pass_condition = filter_config.get("pass_condition", "YES").upper()
+
+                is_pass = pass_condition in content
+
+                if not is_pass:
+                    print(f"  [REJECTED by {filter_name}] Skill '{skill}'")
+                    if self.filters_config.get("cache_results", False):
+                        self.verification_cache[skill] = False
+                    return False
+                else:
+                    print(f"  [PASSED {filter_name}] Skill '{skill}'")
+
+            except Exception as e:
+                print(f"  [ERROR] Filter '{filter_name}' failed for '{skill}': {e}. Defaulting to accept.")
+                continue
+
+        # All filters passed
+        if self.filters_config.get("cache_results", False):
+            self.verification_cache[skill] = True
+        return True
 
     def extract_skills(self, resume_path: str) -> List[str]:
         self.resume_text = self.load_resume(resume_path)
@@ -167,6 +222,7 @@ Respond with ONLY "YES" if there is direct evidence, or "NO" if the skill is onl
                         self.zero_counter_streak = 0
                     continue
 
+                # Always add skill during extraction - filtering happens post-extraction only
                 self.extracted_skills.append(new_skill)
                 self.counter += 1
                 self.zero_counter_streak = 0
@@ -186,10 +242,10 @@ Respond with ONLY "YES" if there is direct evidence, or "NO" if the skill is onl
                     self.zero_counter_streak = 0
                 continue
 
-        # Post-processing: Apply verification gate if enabled
+        # Post-extraction filtering: Apply verification gate if enabled
         if self.use_verification_gate:
             print(f"\n{'='*60}")
-            print(f"Starting verification gate: checking {len(self.extracted_skills)} skills")
+            print(f"Starting post-extraction verification: checking {len(self.extracted_skills)} skills")
             print(f"{'='*60}\n")
 
             verified_skills = []
@@ -220,7 +276,9 @@ def main():
     parser.add_argument('--output', type=str, default='extracted_skills.json',
                        help='Output JSON file (default: extracted_skills.json)')
     parser.add_argument('--model', type=str, default='google/gemini-2.5-flash-lite',
-                       help='Model to use for extraction (default: google/gemini-flash-1.5)')
+                       help='Model to use for extraction (default: google/gemini-2.5-flash-lite)')
+    parser.add_argument('--filters-config', type=str, default='extract_filters.json',
+                       help='Path to filters configuration JSON (default: extract_filters.json)')
 
     args = parser.parse_args()
 
@@ -236,7 +294,8 @@ def main():
         print("Please set OPENROUTER_API_KEY environment variable")
         return
 
-    extractor = SkillExtractor(api_key, use_verification_gate=args.verify_evidence, model=args.model)
+    extractor = SkillExtractor(api_key, use_verification_gate=args.verify_evidence,
+                              model=args.model, filters_config_path=args.filters_config)
 
     # Load and validate resume
     with open(args.resume, 'r', encoding='utf-8') as f:
