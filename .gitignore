@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Claude Code settings (local only)
+.claude/
+
 # Embedding cache
 .embedding_cache/
 
