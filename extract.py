@@ -5,6 +5,18 @@ import os
 from typing import List, Dict, Any
 import asyncio
 import aiohttp
+from pathlib import Path
+
+def get_resume_name(resume_path: str) -> str:
+    """Extract resume name from path (e.g., 'resumes/ebony_moore.txt' -> 'ebony_moore')"""
+    return Path(resume_path).stem
+
+def get_data_dir(resume_path: str) -> Path:
+    """Get data directory for resume (e.g., 'data/ebony_moore/')"""
+    resume_name = get_resume_name(resume_path)
+    data_dir = Path("data") / resume_name
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
 
 class SkillExtractor:
     def __init__(self, api_key: str, use_verification_gate: bool = False, model: str = "google/gemini-2.5-flash-lite",
@@ -299,16 +311,21 @@ def main():
     parser = argparse.ArgumentParser(description="Extract skills from resume using iterative LLM prompting")
     parser.add_argument('--verify-evidence', action='store_true',
                        help='Enable verification gate to check if skills are directly supported by resume (not just inferred)')
-    parser.add_argument('--resume', type=str, default='resume.txt',
-                       help='Path to resume file (default: resume.txt)')
-    parser.add_argument('--output', type=str, default='extracted_skills.json',
-                       help='Output JSON file (default: extracted_skills.json)')
+    parser.add_argument('--resume', type=str, default='resumes/resume.txt',
+                       help='Path to resume file (default: resumes/resume.txt)')
+    parser.add_argument('--output', type=str, default=None,
+                       help='Output JSON file (default: data/{resume_name}/extracted_skills.json)')
     parser.add_argument('--model', type=str, default='google/gemini-2.5-flash-lite',
                        help='Model to use for extraction (default: google/gemini-2.5-flash-lite)')
     parser.add_argument('--filters-config', type=str, default='extract_filters.json',
                        help='Path to filters configuration JSON (default: extract_filters.json)')
 
     args = parser.parse_args()
+
+    # Auto-generate output path if not specified
+    if args.output is None:
+        data_dir = get_data_dir(args.resume)
+        args.output = str(data_dir / "extracted_skills.json")
 
     # Check if resume file exists
     if not os.path.exists(args.resume):

@@ -12,6 +12,17 @@ from pathlib import Path
 import asyncio
 import aiohttp
 
+def get_resume_name(resume_path: str) -> str:
+    """Extract resume name from path (e.g., 'resumes/ebony_moore.txt' -> 'ebony_moore')"""
+    return Path(resume_path).stem
+
+def get_data_dir(resume_path: str) -> Path:
+    """Get data directory for resume (e.g., 'data/ebony_moore/')"""
+    resume_name = get_resume_name(resume_path)
+    data_dir = Path("data") / resume_name
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
+
 class LLM_Gate:
     """
     LLM-based verification using configurable filters from JSON.
@@ -949,10 +960,12 @@ Examples:
     )
 
     # Input/output files
-    parser.add_argument('--skills-file', type=str, default='extracted_skills.json',
-                       help='Path to extracted skills JSON file (default: extracted_skills.json)')
-    parser.add_argument('--output-file', type=str, default='task_skill_matches.json',
-                       help='Path to output results JSON file (default: task_skill_matches.json)')
+    parser.add_argument('--resume', type=str, default='resumes/resume.txt',
+                       help='Path to resume file for auto-generating paths (default: resumes/resume.txt)')
+    parser.add_argument('--skills-file', type=str, default=None,
+                       help='Path to extracted skills JSON file (default: data/{resume_name}/extracted_skills.json)')
+    parser.add_argument('--output-file', type=str, default=None,
+                       help='Path to output results JSON file (default: data/{resume_name}/task_skill_matches.json)')
 
     # Ontology flags
     parser.add_argument('--use-ontologies', action='store_true',
@@ -1009,6 +1022,13 @@ Examples:
 def main():
     # Parse command-line arguments
     args = parse_arguments()
+
+    # Auto-generate paths if not specified
+    data_dir = get_data_dir(args.resume)
+    if args.skills_file is None:
+        args.skills_file = str(data_dir / "extracted_skills.json")
+    if args.output_file is None:
+        args.output_file = str(data_dir / "task_skill_matches.json")
 
     # Print task information
     print_task_description()

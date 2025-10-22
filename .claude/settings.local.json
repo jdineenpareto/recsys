@@ -18,7 +18,11 @@
       "Bash(tree:*)",
       "Bash(for dir in gene_ontology chebi cell_ontology mesh esco)",
       "Bash(do echo \"=== $dir ===\")",
-      "Bash(gunzip:*)"
+      "Bash(gunzip:*)",
+      "Bash(mkdir:*)",
+      "Bash(if [ -f resume.txt ])",
+      "Bash(then mv resume.txt resumes/resume.txt)",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []

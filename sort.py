@@ -7,6 +7,18 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 import asyncio
 import aiohttp
+from pathlib import Path
+
+def get_resume_name(resume_path: str) -> str:
+    """Extract resume name from path (e.g., 'resumes/ebony_moore.txt' -> 'ebony_moore')"""
+    return Path(resume_path).stem
+
+def get_data_dir(resume_path: str) -> Path:
+    """Get data directory for resume (e.g., 'data/ebony_moore/')"""
+    resume_name = get_resume_name(resume_path)
+    data_dir = Path("data") / resume_name
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
 
 @dataclass
 class TrueSkillRating:
@@ -256,6 +268,27 @@ class SkillSorter:
                      reverse=True)
 
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Sort skills using TrueSkill ranking with LLM verification")
+    parser.add_argument('--resume', type=str, default='resumes/resume.txt',
+                       help='Path to resume file (default: resumes/resume.txt)')
+    parser.add_argument('--input', type=str, default=None,
+                       help='Input skills JSON file (default: data/{resume_name}/extracted_skills.json)')
+    parser.add_argument('--output', type=str, default=None,
+                       help='Output sorted skills JSON file (default: data/{resume_name}/sorted_skills.json)')
+    parser.add_argument('--rounds', type=int, default=None,
+                       help='Number of tournament rounds (default: adaptive based on skill count)')
+
+    args = parser.parse_args()
+
+    # Auto-generate paths if not specified
+    data_dir = get_data_dir(args.resume)
+    if args.input is None:
+        args.input = str(data_dir / "extracted_skills.json")
+    if args.output is None:
+        args.output = str(data_dir / "sorted_skills.json")
+
     api_key = os.getenv('OPENROUTER_API_KEY')
     if not api_key:
         print("Please set OPENROUTER_API_KEY environment variable")
@@ -265,13 +298,13 @@ def main():
 
     # Load resume and skills
     print("Loading resume and skills...")
-    sorter.load_resume("resume.txt")
-    skills = sorter.load_skills("extracted_skills.json")
+    sorter.load_resume(args.resume)
+    skills = sorter.load_skills(args.input)
 
     print(f"Loaded {len(skills)} skills: {skills}")
 
     # Run TrueSkill tournament
-    num_rounds = max(2, len(skills) // 2)  # Adaptive number of rounds
+    num_rounds = args.rounds if args.rounds is not None else max(2, len(skills) // 2)  # Adaptive number of rounds
     final_rankings = sorter.run_trueskill_tournament(skills, num_rounds)
 
     print(f"\n🏆 Final TrueSkill Rankings:")
@@ -296,10 +329,10 @@ def main():
         "rounds": num_rounds
     }
 
-    with open("sorted_skills.json", "w") as f:
+    with open(args.output, "w") as f:
         json.dump(result, f, indent=2)
 
-    print("\nResults saved to sorted_skills.json")
+    print(f"\nResults saved to {args.output}")
 
 if __name__ == "__main__":
     main()
