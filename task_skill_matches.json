@@ -102,302 +102,417 @@
     {
       "rank": 1,
       "skill": "System Administration",
-      "compatibility_score": 0.66476970911026
+      "compatibility_score": 0.6647696495056152
     },
     {
       "rank": 2,
-      "skill": "Systems Administration",
-      "compatibility_score": 0.6617424488067627
-    },
-    {
-      "rank": 3,
       "skill": "System Maintenance",
       "compatibility_score": 0.6599147915840149
     },
     {
+      "rank": 3,
+      "skill": "Linux Software",
+      "compatibility_score": 0.6582412123680115
+    },
+    {
       "rank": 4,
-      "skill": "Server Administration",
-      "compatibility_score": 0.6518182754516602
+      "skill": "LINUX Software",
+      "compatibility_score": 0.6582412123680115
     },
     {
       "rank": 5,
+      "skill": "Server Administration",
+      "compatibility_score": 0.6518183350563049
+    },
+    {
+      "rank": 6,
       "skill": "Server Management",
       "compatibility_score": 0.651423990726471
     },
     {
-      "rank": 6,
+      "rank": 7,
       "skill": "System Monitoring",
       "compatibility_score": 0.6504635810852051
     },
     {
-      "rank": 7,
+      "rank": 8,
       "skill": "Linux",
       "compatibility_score": 0.6456255316734314
     },
     {
-      "rank": 8,
-      "skill": "Systems Monitoring",
-      "compatibility_score": 0.6451478600502014
+      "rank": 9,
+      "skill": "LINUX",
+      "compatibility_score": 0.6456255316734314
     },
     {
-      "rank": 9,
+      "rank": 10,
       "skill": "Linux System Administration",
       "compatibility_score": 0.6434944272041321
     },
     {
-      "rank": 10,
+      "rank": 11,
       "skill": "User Management",
       "compatibility_score": 0.6429200172424316
     },
     {
-      "rank": 11,
+      "rank": 12,
       "skill": "Linux Administration",
-      "compatibility_score": 0.6386098265647888
+      "compatibility_score": 0.6386098861694336
     },
     {
-      "rank": 12,
+      "rank": 13,
       "skill": "Operating Systems",
       "compatibility_score": 0.6374498009681702
     },
     {
-      "rank": 13,
+      "rank": 14,
       "skill": "Server Maintenance",
       "compatibility_score": 0.6367040276527405
     },
     {
-      "rank": 14,
-      "skill": "Operating System Troubleshooting",
-      "compatibility_score": 0.6340271234512329
+      "rank": 15,
+      "skill": "System Monitoring Tools",
+      "compatibility_score": 0.6349443793296814
     },
     {
-      "rank": 15,
+      "rank": 16,
+      "skill": "Monitoring Tools",
+      "compatibility_score": 0.6320584416389465
+    },
+    {
+      "rank": 17,
       "skill": "User Administration",
       "compatibility_score": 0.6303509473800659
     },
     {
-      "rank": 16,
-      "skill": "Linux Server Administration",
-      "compatibility_score": 0.6282792091369629
-    },
-    {
-      "rank": 17,
-      "skill": "Operating System Administration",
-      "compatibility_score": 0.6269513964653015
-    },
-    {
       "rank": 18,
-      "skill": "Software Configuration",
-      "compatibility_score": 0.6250563263893127
+      "skill": "Server Monitoring",
+      "compatibility_score": 0.6299089789390564
     },
     {
       "rank": 19,
-      "skill": "Hardware Maintenance",
-      "compatibility_score": 0.620756983757019
+      "skill": "Troubleshooting Process Systems",
+      "compatibility_score": 0.6291806697845459
     },
     {
       "rank": 20,
-      "skill": "System Troubleshooting",
-      "compatibility_score": 0.6203130483627319
+      "skill": "Linux Server Administration",
+      "compatibility_score": 0.6282792687416077
     },
     {
       "rank": 21,
+      "skill": "Operating System Management",
+      "compatibility_score": 0.6276576519012451
+    },
+    {
+      "rank": 22,
+      "skill": "Monitoring",
+      "compatibility_score": 0.6268951892852783
+    },
+    {
+      "rank": 23,
+      "skill": "Network Services Management",
+      "compatibility_score": 0.6260762810707092
+    },
+    {
+      "rank": 24,
+      "skill": "Software Configuration",
+      "compatibility_score": 0.6250564455986023
+    },
+    {
+      "rank": 25,
+      "skill": "Process Systems",
+      "compatibility_score": 0.6236749291419983
+    },
+    {
+      "rank": 26,
+      "skill": "System Troubleshooting",
+      "compatibility_score": 0.6203131079673767
+    },
+    {
+      "rank": 27,
       "skill": "Command Line Tools",
       "compatibility_score": 0.6199832558631897
     },
     {
-      "rank": 22,
+      "rank": 28,
       "skill": "Red Hat Enterprise Linux",
-      "compatibility_score": 0.6193356513977051
+      "compatibility_score": 0.6193355917930603
     },
     {
-      "rank": 23,
+      "rank": 29,
       "skill": "Network Services",
       "compatibility_score": 0.6190043091773987
     },
     {
-      "rank": 24,
+      "rank": 30,
+      "skill": "System Configuration",
+      "compatibility_score": 0.6179025173187256
+    },
+    {
+      "rank": 31,
+      "skill": "Process System Troubleshooting",
+      "compatibility_score": 0.6153300404548645
+    },
+    {
+      "rank": 32,
       "skill": "Software Troubleshooting",
-      "compatibility_score": 0.6136648654937744
+      "compatibility_score": 0.6136649250984192
     },
     {
-      "rank": 25,
-      "skill": "Linux Environment",
-      "compatibility_score": 0.6136094927787781
-    },
-    {
-      "rank": 26,
+      "rank": 33,
       "skill": "Nagios",
-      "compatibility_score": 0.6127715706825256
+      "compatibility_score": 0.6127715110778809
     },
     {
-      "rank": 27,
+      "rank": 34,
+      "skill": "Red Hat Enterprise Linux Administration",
+      "compatibility_score": 0.6114869117736816
+    },
+    {
+      "rank": 35,
       "skill": "Performance Monitoring",
       "compatibility_score": 0.6114135384559631
     },
     {
-      "rank": 28,
+      "rank": 36,
       "skill": "File Systems",
       "compatibility_score": 0.6078277230262756
     },
     {
-      "rank": 29,
+      "rank": 37,
+      "skill": "Linux Software Configuration",
+      "compatibility_score": 0.6075983643531799
+    },
+    {
+      "rank": 38,
+      "skill": "LINUX Software Configuration",
+      "compatibility_score": 0.6075983643531799
+    },
+    {
+      "rank": 39,
       "skill": "File System Management",
       "compatibility_score": 0.6061025857925415
     },
     {
-      "rank": 30,
+      "rank": 40,
+      "skill": "Virtual Machines",
+      "compatibility_score": 0.6051986217498779
+    },
+    {
+      "rank": 41,
       "skill": "User Account Management",
-      "compatibility_score": 0.6035962104797363
+      "compatibility_score": 0.6035961508750916
     },
     {
-      "rank": 31,
+      "rank": 42,
+      "skill": "User Account Administration",
+      "compatibility_score": 0.6030328869819641
+    },
+    {
+      "rank": 43,
       "skill": "Linux Troubleshooting",
-      "compatibility_score": 0.6012045741081238
+      "compatibility_score": 0.6012046337127686
     },
     {
-      "rank": 32,
+      "rank": 44,
+      "skill": "Storage Management",
+      "compatibility_score": 0.6004751920700073
+    },
+    {
+      "rank": 45,
       "skill": "Server Configuration",
       "compatibility_score": 0.5992563962936401
     },
     {
-      "rank": 33,
+      "rank": 46,
+      "skill": "User Accounts",
+      "compatibility_score": 0.5990345478057861
+    },
+    {
+      "rank": 47,
+      "skill": "Software Debugging",
+      "compatibility_score": 0.598112165927887
+    },
+    {
+      "rank": 48,
+      "skill": "System Debugging",
+      "compatibility_score": 0.5979388356208801
+    },
+    {
+      "rank": 49,
       "skill": "Troubleshooting",
       "compatibility_score": 0.5975882411003113
     },
     {
-      "rank": 34,
-      "skill": "Network Monitoring",
-      "compatibility_score": 0.5967685580253601
+      "rank": 50,
+      "skill": "Name Servers",
+      "compatibility_score": 0.5951178669929504
     },
     {
-      "rank": 35,
-      "skill": "Red Hat Enterprise Linux (RHEL)",
-      "compatibility_score": 0.5963677763938904
+      "rank": 51,
+      "skill": "Linux Command Line Interface",
+      "compatibility_score": 0.5945969223976135
     },
     {
-      "rank": 36,
-      "skill": "Troubleshoot",
-      "compatibility_score": 0.5943970680236816
+      "rank": 52,
+      "skill": "User and Group Management",
+      "compatibility_score": 0.5935583114624023
     },
     {
-      "rank": 37,
-      "skill": "RHEL Security",
-      "compatibility_score": 0.5937957167625427
+      "rank": 53,
+      "skill": "DNS Administration",
+      "compatibility_score": 0.5926283597946167
     },
     {
-      "rank": 38,
+      "rank": 54,
       "skill": "RHEL",
       "compatibility_score": 0.5915138721466064
     },
     {
-      "rank": 39,
+      "rank": 55,
       "skill": "VMware",
-      "compatibility_score": 0.5908790826797485
+      "compatibility_score": 0.5908791422843933
     },
     {
-      "rank": 40,
+      "rank": 56,
+      "skill": "Troubleshooting Multi-functional Process Systems",
+      "compatibility_score": 0.589532196521759
+    },
+    {
+      "rank": 57,
       "skill": "System Hardening",
       "compatibility_score": 0.5892882347106934
     },
     {
-      "rank": 41,
+      "rank": 58,
+      "skill": "Operating System Configuration",
+      "compatibility_score": 0.5883808135986328
+    },
+    {
+      "rank": 59,
+      "skill": "Red Hat",
+      "compatibility_score": 0.5850124359130859
+    },
+    {
+      "rank": 60,
       "skill": "DNS",
-      "compatibility_score": 0.5843403339385986
+      "compatibility_score": 0.5843402743339539
     },
     {
-      "rank": 42,
-      "skill": "User Permissions",
-      "compatibility_score": 0.5827138423919678
+      "rank": 61,
+      "skill": "Linux Command Line",
+      "compatibility_score": 0.5842468738555908
     },
     {
-      "rank": 43,
+      "rank": 62,
       "skill": "Data Transfer",
       "compatibility_score": 0.5826365947723389
     },
     {
-      "rank": 44,
+      "rank": 63,
       "skill": "Virtualization",
       "compatibility_score": 0.5792021155357361
     },
     {
-      "rank": 45,
-      "skill": "Security Hardening",
-      "compatibility_score": 0.5771922469139099
+      "rank": 64,
+      "skill": "UNIX/Linux Command Line",
+      "compatibility_score": 0.5773758888244629
     },
     {
-      "rank": 46,
+      "rank": 65,
       "skill": "Nagios Monitoring Tool",
       "compatibility_score": 0.5763599276542664
     },
     {
-      "rank": 47,
-      "skill": "User Account Management (Linux)",
-      "compatibility_score": 0.5762894749641418
-    },
-    {
-      "rank": 48,
-      "skill": "Virtualization Management",
-      "compatibility_score": 0.5747653245925903
-    },
-    {
-      "rank": 49,
+      "rank": 66,
       "skill": "RHEL Hardening",
       "compatibility_score": 0.5710292458534241
     },
     {
-      "rank": 50,
-      "skill": "RHEL Update Management",
-      "compatibility_score": 0.5691297054290771
+      "rank": 67,
+      "skill": "Server Virtualization",
+      "compatibility_score": 0.5702842473983765
     },
     {
-      "rank": 51,
+      "rank": 68,
       "skill": "User Provisioning",
       "compatibility_score": 0.5684916973114014
     },
     {
-      "rank": 52,
-      "skill": "DNS (Domain Name System)",
-      "compatibility_score": 0.5644777417182922
+      "rank": 69,
+      "skill": "Logical Volume Management",
+      "compatibility_score": 0.5672808289527893
     },
     {
-      "rank": 53,
+      "rank": 70,
+      "skill": "logical volume management",
+      "compatibility_score": 0.5672808289527893
+    },
+    {
+      "rank": 71,
+      "skill": "Troubleshooting Automation Equipment",
+      "compatibility_score": 0.5617721676826477
+    },
+    {
+      "rank": 72,
       "skill": "Data Migration",
       "compatibility_score": 0.5617227554321289
     },
     {
-      "rank": 54,
+      "rank": 73,
+      "skill": "Nameservers",
+      "compatibility_score": 0.5615703463554382
+    },
+    {
+      "rank": 74,
+      "skill": "File System Creation",
+      "compatibility_score": 0.5612686276435852
+    },
+    {
+      "rank": 75,
       "skill": "Automation Equipment Troubleshooting",
-      "compatibility_score": 0.5607267022132874
+      "compatibility_score": 0.5607266426086426
     },
     {
-      "rank": 55,
-      "skill": "Domain Name System (DNS)",
-      "compatibility_score": 0.5567767024040222
+      "rank": 76,
+      "skill": "Linux Environment Configuration",
+      "compatibility_score": 0.5572175979614258
     },
     {
-      "rank": 56,
-      "skill": "File System Configuration",
-      "compatibility_score": 0.5511319637298584
-    },
-    {
-      "rank": 57,
-      "skill": "DNS Configuration Management",
-      "compatibility_score": 0.5490594506263733
-    },
-    {
-      "rank": 58,
+      "rank": 77,
       "skill": "Nameserver Configuration",
       "compatibility_score": 0.5453720688819885
     },
     {
-      "rank": 59,
+      "rank": 78,
+      "skill": "User Account Provisioning",
+      "compatibility_score": 0.5426374077796936
+    },
+    {
+      "rank": 79,
+      "skill": "RHEL Hardening Standards",
+      "compatibility_score": 0.5409325361251831
+    },
+    {
+      "rank": 80,
       "skill": "DNS Configuration",
       "compatibility_score": 0.5395240187644958
     },
     {
-      "rank": 60,
-      "skill": "Namelist Configuration",
-      "compatibility_score": 0.5374072194099426
+      "rank": 81,
+      "skill": "User Provisioning and De-provisioning",
+      "compatibility_score": 0.5315101146697998
+    },
+    {
+      "rank": 82,
+      "skill": "DNS Troubleshooting",
+      "compatibility_score": 0.5194550156593323
+    },
+    {
+      "rank": 83,
+      "skill": "User Account Provisioning and De-provisioning",
+      "compatibility_score": 0.5121744275093079
     }
   ]
 }

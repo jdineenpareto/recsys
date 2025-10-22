@@ -5,6 +5,8 @@ import math
 import random
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
+import asyncio
+import aiohttp
 
 @dataclass
 class TrueSkillRating:
@@ -62,8 +64,8 @@ class SkillSorter:
         response.raise_for_status()
         return response.json()
 
-    def ask_comparison(self, skill_a: str, skill_b: str, question_type: str) -> bool:
-        """Ask one of four question types for verification"""
+    async def ask_comparison_async(self, session: aiohttp.ClientSession, skill_a: str, skill_b: str, question_type: str) -> bool:
+        """Ask one of four question types for verification asynchronously"""
 
         if question_type == 'a_over_b':
             prompt = f'Is the skill "{skill_a}" more supported by evidence in the resume than the skill "{skill_b}"? Answer only "true" or "false".'
@@ -77,25 +79,47 @@ class SkillSorter:
             raise ValueError(f"Invalid question type: {question_type}")
 
         try:
-            response = self.make_api_request(prompt)
-            content = response['choices'][0]['message']['content'].strip().lower()
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://github.com/yourusername/yourrepo",
+                "X-Title": "Skill Sorter"
+            }
+
+            data = {
+                "model": self.model,
+                "messages": [
+                    {"role": "system", "content": self.resume_content},
+                    {"role": "user", "content": prompt}
+                ]
+            }
+
+            async with session.post(self.base_url, headers=headers, json=data, timeout=aiohttp.ClientTimeout(total=30)) as response:
+                response.raise_for_status()
+                result = await response.json()
+
+            content = result['choices'][0]['message']['content'].strip().lower()
             return content == 'true'
         except Exception as e:
             print(f"Error in comparison: {e}")
             return False
 
-    def compare_skills_verified(self, skill_a: str, skill_b: str) -> Optional[bool]:
+    async def compare_skills_verified_async(self, skill_a: str, skill_b: str) -> Optional[bool]:
         """
-        Compare two skills with quadruple verification.
+        Compare two skills with quadruple verification using async concurrency.
         Returns True if A wins, False if B wins, None if verification fails.
         """
         print(f"Comparing: {skill_a} vs {skill_b}")
 
-        # Ask all four ways
-        a_over_b = self.ask_comparison(skill_a, skill_b, 'a_over_b')
-        b_over_a = self.ask_comparison(skill_a, skill_b, 'b_over_a')
-        not_a_over_b = self.ask_comparison(skill_a, skill_b, 'not_a_over_b')
-        not_b_over_a = self.ask_comparison(skill_a, skill_b, 'not_b_over_a')
+        # Run all four comparisons concurrently
+        async with aiohttp.ClientSession() as session:
+            tasks = [
+                self.ask_comparison_async(session, skill_a, skill_b, 'a_over_b'),
+                self.ask_comparison_async(session, skill_a, skill_b, 'b_over_a'),
+                self.ask_comparison_async(session, skill_a, skill_b, 'not_a_over_b'),
+                self.ask_comparison_async(session, skill_a, skill_b, 'not_b_over_a')
+            ]
+            a_over_b, b_over_a, not_a_over_b, not_b_over_a = await asyncio.gather(*tasks)
 
         print(f"  A>B: {a_over_b}, B>A: {b_over_a}, !(A>B): {not_a_over_b}, !(B>A): {not_b_over_a}")
 
@@ -117,6 +141,19 @@ class SkillSorter:
 
         print(f"  ✗ Verification failed - inconsistent answers")
         return None
+
+    def ask_comparison(self, skill_a: str, skill_b: str, question_type: str) -> bool:
+        """Synchronous wrapper for ask_comparison_async (deprecated)"""
+        async def run():
+            async with aiohttp.ClientSession() as session:
+                return await self.ask_comparison_async(session, skill_a, skill_b, question_type)
+        return asyncio.run(run())
+
+    def compare_skills_verified(self, skill_a: str, skill_b: str) -> Optional[bool]:
+        """
+        Synchronous wrapper for compare_skills_verified_async.
+        """
+        return asyncio.run(self.compare_skills_verified_async(skill_a, skill_b))
 
     def gaussian_cdf(self, x: float) -> float:
         """Cumulative distribution function of standard normal distribution"""

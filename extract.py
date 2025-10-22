@@ -3,6 +3,8 @@ import random
 import requests
 import os
 from typing import List, Dict, Any
+import asyncio
+import aiohttp
 
 class SkillExtractor:
     def __init__(self, api_key: str, use_verification_gate: bool = False, model: str = "google/gemini-2.5-flash-lite",
@@ -74,11 +76,57 @@ class SkillExtractor:
 
         return remaining_skills
 
-    def verify_skill_directly_supported(self, skill: str) -> bool:
+    async def _run_filter_async(self, session: aiohttp.ClientSession, filter_config: dict, skill: str, model: str) -> tuple[bool, str]:
+        """
+        Run a single filter check asynchronously.
+        Returns (is_pass, filter_name)
+        """
+        filter_name = filter_config.get("name", "unnamed_filter")
+
+        # Build system prompt (replace resume_text placeholder)
+        system_prompt = filter_config.get("system_prompt", "").replace("{resume_text}", self.resume_text)
+
+        # Build user prompt from template
+        user_prompt_template = filter_config.get("user_prompt_template", "")
+        user_prompt = user_prompt_template.replace("{skill}", skill)
+
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://github.com/yourusername/yourrepo",
+                "X-Title": "Skill Extractor"
+            }
+
+            data = {
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                "temperature": filter_config.get("temperature", 0.1),
+                "max_tokens": filter_config.get("max_tokens", 100)
+            }
+
+            async with session.post(self.base_url, headers=headers, json=data, timeout=aiohttp.ClientTimeout(total=30)) as response:
+                response.raise_for_status()
+                result = await response.json()
+
+            content = result['choices'][0]['message']['content'].strip().upper()
+            pass_condition = filter_config.get("pass_condition", "YES").upper()
+
+            is_pass = pass_condition in content
+            return is_pass, filter_name
+
+        except Exception as e:
+            print(f"  [ERROR] Filter '{filter_name}' failed for '{skill}': {e}. Defaulting to accept.")
+            return True, filter_name
+
+    async def verify_skill_directly_supported_async(self, skill: str) -> bool:
         """
         Verification gate: Check if skill is directly supported by resume evidence.
         Returns True if directly supported, False if only inferred.
-        Uses filters configuration from extract_filters.json.
+        Uses filters configuration from extract_filters.json with async concurrency.
         """
         if not self.use_verification_gate:
             return True
@@ -97,61 +145,34 @@ class SkillExtractor:
         # Use model from config or fallback to instance model
         model = self.filters_config.get("model", self.model)
 
-        # Apply each filter
-        for filter_config in enabled_filters:
-            filter_name = filter_config.get("name", "unnamed_filter")
+        # Run all filters concurrently
+        async with aiohttp.ClientSession() as session:
+            tasks = [
+                self._run_filter_async(session, filter_config, skill, model)
+                for filter_config in enabled_filters
+            ]
+            results = await asyncio.gather(*tasks)
 
-            # Build system prompt (replace resume_text placeholder)
-            system_prompt = filter_config.get("system_prompt", "").replace("{resume_text}", self.resume_text)
-
-            # Build user prompt from template
-            user_prompt_template = filter_config.get("user_prompt_template", "")
-            user_prompt = user_prompt_template.replace("{skill}", skill)
-
-            try:
-                # Create custom API request with filter-specific model
-                headers = {
-                    "Authorization": f"Bearer {self.api_key}",
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": "https://github.com/yourusername/yourrepo",
-                    "X-Title": "Skill Extractor"
-                }
-
-                data = {
-                    "model": model,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    "temperature": filter_config.get("temperature", 0.1),
-                    "max_tokens": filter_config.get("max_tokens", 100)
-                }
-
-                response = requests.post(self.base_url, headers=headers, json=data)
-                response.raise_for_status()
-                result = response.json()
-
-                content = result['choices'][0]['message']['content'].strip().upper()
-                pass_condition = filter_config.get("pass_condition", "YES").upper()
-
-                is_pass = pass_condition in content
-
-                if not is_pass:
-                    print(f"  [REJECTED by {filter_name}] Skill '{skill}'")
-                    if self.filters_config.get("cache_results", False):
-                        self.verification_cache[skill] = False
-                    return False
-                else:
-                    print(f"  [PASSED {filter_name}] Skill '{skill}'")
-
-            except Exception as e:
-                print(f"  [ERROR] Filter '{filter_name}' failed for '{skill}': {e}. Defaulting to accept.")
-                continue
+        # Check results
+        for is_pass, filter_name in results:
+            if not is_pass:
+                print(f"  [REJECTED by {filter_name}] Skill '{skill}'")
+                if self.filters_config.get("cache_results", False):
+                    self.verification_cache[skill] = False
+                return False
+            else:
+                print(f"  [PASSED {filter_name}] Skill '{skill}'")
 
         # All filters passed
         if self.filters_config.get("cache_results", False):
             self.verification_cache[skill] = True
         return True
+
+    def verify_skill_directly_supported(self, skill: str) -> bool:
+        """
+        Synchronous wrapper for verify_skill_directly_supported_async.
+        """
+        return asyncio.run(self.verify_skill_directly_supported_async(skill))
 
     def extract_skills(self, resume_path: str) -> List[str]:
         self.resume_text = self.load_resume(resume_path)
@@ -248,11 +269,18 @@ class SkillExtractor:
             print(f"Starting post-extraction verification: checking {len(self.extracted_skills)} skills")
             print(f"{'='*60}\n")
 
+            # Run verification in parallel for all skills
+            async def verify_all_skills():
+                tasks = [self.verify_skill_directly_supported_async(skill) for skill in self.extracted_skills]
+                return await asyncio.gather(*tasks)
+
+            verification_results = asyncio.run(verify_all_skills())
+
             verified_skills = []
             rejected_count = 0
 
-            for skill in self.extracted_skills:
-                if self.verify_skill_directly_supported(skill):
+            for skill, is_verified in zip(self.extracted_skills, verification_results):
+                if is_verified:
                     verified_skills.append(skill)
                 else:
                     rejected_count += 1

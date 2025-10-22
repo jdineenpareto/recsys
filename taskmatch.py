@@ -9,6 +9,8 @@ import os
 import hashlib
 import pickle
 from pathlib import Path
+import asyncio
+import aiohttp
 
 class LLM_Gate:
     """
@@ -47,9 +49,9 @@ class LLM_Gate:
         """Check if LLM gate is enabled (API key is available and filters configured)"""
         return self.api_key is not None and len(self.filters) > 0
 
-    def run_filter(self, filter_config: dict, input_node: str, extracted_skill: str, similarity_score: float) -> Tuple[bool, str]:
+    async def run_filter(self, session: aiohttp.ClientSession, filter_config: dict, input_node: str, extracted_skill: str, similarity_score: float) -> Tuple[bool, str]:
         """
-        Run a single filter check via LLM.
+        Run a single filter check via LLM asynchronously.
 
         Returns:
             Tuple of (passes_filter, filter_name)
@@ -88,10 +90,10 @@ class LLM_Gate:
                 "max_tokens": filter_config.get('max_tokens', 10)
             }
 
-            response = requests.post(self.base_url, headers=headers, json=data, timeout=30)
-            response.raise_for_status()
+            async with session.post(self.base_url, headers=headers, json=data, timeout=aiohttp.ClientTimeout(total=30)) as response:
+                response.raise_for_status()
+                result = await response.json()
 
-            result = response.json()
             answer = result['choices'][0]['message']['content'].strip().upper()
 
             # Check if answer matches pass condition
@@ -109,9 +111,9 @@ class LLM_Gate:
             print(f"  [ERROR] Filter '{filter_name}' failed: {e}. Defaulting to PASS.")
             return True, filter_name
 
-    def verify_synonym(self, input_node: str, extracted_skill: str, similarity_score: float) -> bool:
+    async def verify_synonym(self, input_node: str, extracted_skill: str, similarity_score: float) -> bool:
         """
-        Verify if two terms pass all configured filters.
+        Verify if two terms pass all configured filters using async concurrency.
 
         Args:
             input_node: The task requirement term
@@ -125,20 +127,38 @@ class LLM_Gate:
             # If no API key or no filters, default to accepting high similarity matches
             return True
 
-        # Run each enabled filter
-        for filter_config in self.filters:
-            if not filter_config.get('enabled', True):
-                continue
+        # Get enabled filters
+        enabled_filters = [f for f in self.filters if f.get('enabled', True)]
+        if not enabled_filters:
+            return True
 
-            passes, filter_name = self.run_filter(filter_config, input_node, extracted_skill, similarity_score)
-
-            if not passes:
-                print(f"  [REJECTED] '{extracted_skill}' failed filter '{filter_name}' for '{input_node}' (sim={similarity_score:.3f})")
-                return False
-
+        # Create aiohttp session for concurrent requests
+        async with aiohttp.ClientSession() as session:
             if self.stop_on_first_pass:
-                print(f"  [OK] '{extracted_skill}' passed filter '{filter_name}' for '{input_node}' (sim={similarity_score:.3f})")
-                return True
+                # Run filters sequentially with early stopping
+                for filter_config in enabled_filters:
+                    passes, filter_name = await self.run_filter(session, filter_config, input_node, extracted_skill, similarity_score)
+
+                    if not passes:
+                        print(f"  [REJECTED] '{extracted_skill}' failed filter '{filter_name}' for '{input_node}' (sim={similarity_score:.3f})")
+                        return False
+
+                    if self.stop_on_first_pass:
+                        print(f"  [OK] '{extracted_skill}' passed filter '{filter_name}' for '{input_node}' (sim={similarity_score:.3f})")
+                        return True
+            else:
+                # Run all filters concurrently and wait for all results
+                tasks = [
+                    self.run_filter(session, filter_config, input_node, extracted_skill, similarity_score)
+                    for filter_config in enabled_filters
+                ]
+                results = await asyncio.gather(*tasks)
+
+                # Check if all passed
+                for passes, filter_name in results:
+                    if not passes:
+                        print(f"  [REJECTED] '{extracted_skill}' failed filter '{filter_name}' for '{input_node}' (sim={similarity_score:.3f})")
+                        return False
 
         # All filters passed
         print(f"  [OK] '{extracted_skill}' passed all filters for '{input_node}' (sim={similarity_score:.3f})")
@@ -326,7 +346,7 @@ def compute_embeddings(texts: List[str], model_name: str = 'all-MiniLM-L6-v2', u
 
     return embeddings
 
-def compute_input_node_scores(
+async def compute_input_node_scores_async(
     input_nodes: List[str],
     extracted_skills: List[str],
     llm_gate: Optional['LLM_Gate'] = None,
@@ -336,7 +356,7 @@ def compute_input_node_scores(
 ) -> Dict[str, np.ndarray]:
     """
     Compute dot product scores for each input node against all extracted skills.
-    Optionally uses LLM gate to verify high-similarity matches.
+    Optionally uses LLM gate to verify high-similarity matches with async concurrency.
     Applies global match threshold to filter low-similarity matches.
 
     Args:
@@ -374,7 +394,7 @@ def compute_input_node_scores(
         similarity_matrix[below_threshold] = 0.0
         print(f"Filtered {num_filtered} matches below threshold")
 
-    # Apply LLM gate if enabled - process per input node in descending order
+    # Apply LLM gate if enabled - process per input node in descending order with async concurrency
     if llm_gate and llm_gate.is_enabled():
         print(f"\nApplying LLM gate to high-similarity matches (threshold: {llm_gate_threshold})...")
         gate_checks = 0
@@ -397,7 +417,7 @@ def compute_input_node_scores(
                 extracted_skill = extracted_skills[j]
                 gate_checks += 1
 
-                is_valid = llm_gate.verify_synonym(input_node, extracted_skill, score)
+                is_valid = await llm_gate.verify_synonym(input_node, extracted_skill, score)
 
                 if is_valid:
                     # Found a valid match - stop checking this input node
@@ -416,6 +436,26 @@ def compute_input_node_scores(
         input_scores[input_node] = similarity_matrix[:, i]
 
     return input_scores
+
+def compute_input_node_scores(
+    input_nodes: List[str],
+    extracted_skills: List[str],
+    llm_gate: Optional['LLM_Gate'] = None,
+    llm_gate_threshold: float = 0.7,
+    match_threshold: float = 0.0,
+    use_cache: bool = True
+) -> Dict[str, np.ndarray]:
+    """
+    Synchronous wrapper for compute_input_node_scores_async.
+    """
+    return asyncio.run(compute_input_node_scores_async(
+        input_nodes,
+        extracted_skills,
+        llm_gate,
+        llm_gate_threshold,
+        match_threshold,
+        use_cache
+    ))
 
 
 def evaluate_graph_node(
