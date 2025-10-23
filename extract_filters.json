@@ -1,0 +1,21 @@
+{
+  "_comment": "Filter configuration for extract.py skill verification gate",
+  "_usage": "Use --verify-evidence flag to enable post-extraction filtering",
+  "_design_note": "Filters ALWAYS run post-extraction to maximize skill extraction before filtering",
+
+  "filters": [
+    {
+      "name": "direct_evidence_check",
+      "enabled": true,
+      "description": "Check if skill is directly supported by resume evidence (not just inferred)",
+      "system_prompt": "{resume_text}",
+      "user_prompt_template": "Does the resume contain DIRECT evidence that the candidate has the skill \"{skill}\"?\n\nDirect evidence means:\n- Explicit mention of the skill/technology/tool by name\n- Clear description of using or working with this specific skill\n- Projects, tasks, or responsibilities that explicitly involve this skill\n\nNOT direct evidence:\n- Skills that could be inferred but aren't explicitly mentioned\n- General statements that might imply the skill\n- Related skills that aren't the same thing\n\nRespond with ONLY \"YES\" if there is direct evidence, or \"NO\" if the skill is only inferred.",
+      "temperature": 0.1,
+      "max_tokens": 100,
+      "pass_condition": "YES"
+    }
+  ],
+
+  "model": "google/gemini-2.5-flash-lite",
+  "cache_results": true
+}

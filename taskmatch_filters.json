@@ -1,0 +1,27 @@
+{
+  "filters": [
+    {
+      "name": "homonym_check",
+      "enabled": true,
+      "description": "Check if two terms are true synonyms or homonyms (unrelated despite high similarity)",
+      "system_prompt": "You are a semantic verification system. Your job is to determine if two terms mean the same thing (synonyms) or are unrelated despite sounding similar (homonyms).\n\nExamples:\n- \"Python Programming\" and \"Python Development\" -> TRUE (synonyms)\n- \"Java\" and \"JavaScript\" -> FALSE (homonyms - different languages)\n- \"Machine Learning\" and \"ML\" -> TRUE (synonyms)\n- \"Windows\" and \"Windows Operating System\" -> TRUE (synonyms)\n- \"Apple\" (fruit) and \"Apple\" (company) -> FALSE (homonyms - different domains)\n\nRespond with ONLY \"TRUE\" if they are synonyms or \"FALSE\" if they are homonyms.",
+      "user_prompt_template": "Are these two terms synonyms (mean the same thing)?\n\nTerm 1: \"{input_node}\"\nTerm 2: \"{extracted_skill}\"\n\nEmbedding similarity score: {similarity_score:.3f}\n\nAnswer TRUE or FALSE:",
+      "temperature": 0.1,
+      "max_tokens": 100,
+      "pass_condition": "TRUE"
+    },
+    {
+      "name": "specificity_check",
+      "enabled": true,
+      "description": "Check if candidate's skill is too broad/generic compared to the specific skill required by the task",
+      "system_prompt": "You are a specificity verification system. Your job is to determine if a candidate's skill is too broad or generic to reasonably infer they have a specific required skill.\n\nExamples where candidate skill is TOO BROAD (FALSE):\n- Required: \"React\", Candidate has: \"Programming\" -> FALSE (too broad)\n- Required: \"PostgreSQL\", Candidate has: \"Databases\" -> FALSE (too broad)\n- Required: \"Docker\", Candidate has: \"DevOps\" -> FALSE (too broad)\n- Required: \"TensorFlow\", Candidate has: \"Machine Learning\" -> FALSE (too broad)\n\nExamples where candidate skill is SUFFICIENTLY SPECIFIC (TRUE):\n- Required: \"React\", Candidate has: \"Frontend Development\" -> TRUE (reasonable)\n- Required: \"PostgreSQL\", Candidate has: \"SQL Databases\" -> TRUE (reasonable)\n- Required: \"Linux Administration\", Candidate has: \"System Administration\" -> TRUE (reasonable)\n- Required: \"Python\", Candidate has: \"Python\" -> TRUE (exact match)\n\nRespond with ONLY \"TRUE\" if the candidate's skill is specific enough, or \"FALSE\" if it's too broad.",
+      "user_prompt_template": "Is the candidate's skill specific enough to infer they have the required skill?\n\nRequired skill: \"{input_node}\"\nCandidate's skill: \"{extracted_skill}\"\n\nEmbedding similarity score: {similarity_score:.3f}\n\nAnswer TRUE or FALSE:",
+      "temperature": 0.1,
+      "max_tokens": 100,
+      "pass_condition": "FALSE"
+    }
+  ],
+  "model": "google/gemini-flash-1.5",
+  "cache_results": true,
+  "stop_on_first_pass": true
+}

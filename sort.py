@@ -5,6 +5,20 @@ import math
 import random
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
+import asyncio
+import aiohttp
+from pathlib import Path
+
+def get_resume_name(resume_path: str) -> str:
+    """Extract resume name from path (e.g., 'resumes/ebony_moore.txt' -> 'ebony_moore')"""
+    return Path(resume_path).stem
+
+def get_data_dir(resume_path: str) -> Path:
+    """Get data directory for resume (e.g., 'data/ebony_moore/')"""
+    resume_name = get_resume_name(resume_path)
+    data_dir = Path("data") / resume_name
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
 
 @dataclass
 class TrueSkillRating:
@@ -62,8 +76,8 @@ class SkillSorter:
         response.raise_for_status()
         return response.json()
 
-    def ask_comparison(self, skill_a: str, skill_b: str, question_type: str) -> bool:
-        """Ask one of four question types for verification"""
+    async def ask_comparison_async(self, session: aiohttp.ClientSession, skill_a: str, skill_b: str, question_type: str) -> bool:
+        """Ask one of four question types for verification asynchronously"""
 
         if question_type == 'a_over_b':
             prompt = f'Is the skill "{skill_a}" more supported by evidence in the resume than the skill "{skill_b}"? Answer only "true" or "false".'
@@ -77,25 +91,47 @@ class SkillSorter:
             raise ValueError(f"Invalid question type: {question_type}")
 
         try:
-            response = self.make_api_request(prompt)
-            content = response['choices'][0]['message']['content'].strip().lower()
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://github.com/yourusername/yourrepo",
+                "X-Title": "Skill Sorter"
+            }
+
+            data = {
+                "model": self.model,
+                "messages": [
+                    {"role": "system", "content": self.resume_content},
+                    {"role": "user", "content": prompt}
+                ]
+            }
+
+            async with session.post(self.base_url, headers=headers, json=data, timeout=aiohttp.ClientTimeout(total=30)) as response:
+                response.raise_for_status()
+                result = await response.json()
+
+            content = result['choices'][0]['message']['content'].strip().lower()
             return content == 'true'
         except Exception as e:
             print(f"Error in comparison: {e}")
             return False
 
-    def compare_skills_verified(self, skill_a: str, skill_b: str) -> Optional[bool]:
+    async def compare_skills_verified_async(self, skill_a: str, skill_b: str) -> Optional[bool]:
         """
-        Compare two skills with quadruple verification.
+        Compare two skills with quadruple verification using async concurrency.
         Returns True if A wins, False if B wins, None if verification fails.
         """
         print(f"Comparing: {skill_a} vs {skill_b}")
 
-        # Ask all four ways
-        a_over_b = self.ask_comparison(skill_a, skill_b, 'a_over_b')
-        b_over_a = self.ask_comparison(skill_a, skill_b, 'b_over_a')
-        not_a_over_b = self.ask_comparison(skill_a, skill_b, 'not_a_over_b')
-        not_b_over_a = self.ask_comparison(skill_a, skill_b, 'not_b_over_a')
+        # Run all four comparisons concurrently
+        async with aiohttp.ClientSession() as session:
+            tasks = [
+                self.ask_comparison_async(session, skill_a, skill_b, 'a_over_b'),
+                self.ask_comparison_async(session, skill_a, skill_b, 'b_over_a'),
+                self.ask_comparison_async(session, skill_a, skill_b, 'not_a_over_b'),
+                self.ask_comparison_async(session, skill_a, skill_b, 'not_b_over_a')
+            ]
+            a_over_b, b_over_a, not_a_over_b, not_b_over_a = await asyncio.gather(*tasks)
 
         print(f"  A>B: {a_over_b}, B>A: {b_over_a}, !(A>B): {not_a_over_b}, !(B>A): {not_b_over_a}")
 
@@ -117,6 +153,19 @@ class SkillSorter:
 
         print(f"  ✗ Verification failed - inconsistent answers")
         return None
+
+    def ask_comparison(self, skill_a: str, skill_b: str, question_type: str) -> bool:
+        """Synchronous wrapper for ask_comparison_async (deprecated)"""
+        async def run():
+            async with aiohttp.ClientSession() as session:
+                return await self.ask_comparison_async(session, skill_a, skill_b, question_type)
+        return asyncio.run(run())
+
+    def compare_skills_verified(self, skill_a: str, skill_b: str) -> Optional[bool]:
+        """
+        Synchronous wrapper for compare_skills_verified_async.
+        """
+        return asyncio.run(self.compare_skills_verified_async(skill_a, skill_b))
 
     def gaussian_cdf(self, x: float) -> float:
         """Cumulative distribution function of standard normal distribution"""
@@ -219,6 +268,27 @@ class SkillSorter:
                      reverse=True)
 
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Sort skills using TrueSkill ranking with LLM verification")
+    parser.add_argument('--resume', type=str, default='resumes/resume.txt',
+                       help='Path to resume file (default: resumes/resume.txt)')
+    parser.add_argument('--input', type=str, default=None,
+                       help='Input skills JSON file (default: data/{resume_name}/extracted_skills.json)')
+    parser.add_argument('--output', type=str, default=None,
+                       help='Output sorted skills JSON file (default: data/{resume_name}/sorted_skills.json)')
+    parser.add_argument('--rounds', type=int, default=None,
+                       help='Number of tournament rounds (default: adaptive based on skill count)')
+
+    args = parser.parse_args()
+
+    # Auto-generate paths if not specified
+    data_dir = get_data_dir(args.resume)
+    if args.input is None:
+        args.input = str(data_dir / "extracted_skills.json")
+    if args.output is None:
+        args.output = str(data_dir / "sorted_skills.json")
+
     api_key = os.getenv('OPENROUTER_API_KEY')
     if not api_key:
         print("Please set OPENROUTER_API_KEY environment variable")
@@ -228,13 +298,13 @@ def main():
 
     # Load resume and skills
     print("Loading resume and skills...")
-    sorter.load_resume("resume.txt")
-    skills = sorter.load_skills("extracted_skills.json")
+    sorter.load_resume(args.resume)
+    skills = sorter.load_skills(args.input)
 
     print(f"Loaded {len(skills)} skills: {skills}")
 
     # Run TrueSkill tournament
-    num_rounds = max(2, len(skills) // 2)  # Adaptive number of rounds
+    num_rounds = args.rounds if args.rounds is not None else max(2, len(skills) // 2)  # Adaptive number of rounds
     final_rankings = sorter.run_trueskill_tournament(skills, num_rounds)
 
     print(f"\n🏆 Final TrueSkill Rankings:")
@@ -259,10 +329,10 @@ def main():
         "rounds": num_rounds
     }
 
-    with open("sorted_skills.json", "w") as f:
+    with open(args.output, "w") as f:
         json.dump(result, f, indent=2)
 
-    print("\nResults saved to sorted_skills.json")
+    print(f"\nResults saved to {args.output}")
 
 if __name__ == "__main__":
     main()
